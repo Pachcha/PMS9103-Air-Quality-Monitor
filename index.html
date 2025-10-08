@@ -340,6 +340,90 @@
             margin-top: 15px;
             text-align: center;
         }
+
+        /* Alert Banner */
+        .alert-banner {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideInRight 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.95);
+            border: 1px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.95);
+            border: 1px solid var(--warning);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Download Button */
+        .download-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Offline Indicator */
+        .offline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .offline-message {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid var(--danger);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -521,7 +605,30 @@
         <div class="timestamp" id="lastUpdate">Last updated: --</div>
     </div>
 
-    <script type="module">
+    <!-- Download CSV Button -->
+    <button class="download-btn" onclick="downloadCSV()">📥 ดาวน์โหลดข้อมูล CSV</button>
+
+    <!-- Offline Overlay (hidden by default) -->
+    <div id="offlineOverlay" class="offline-overlay" style="display: none;">
+        <div class="offline-message">
+            <h2>❌ ไม่มีข้อมูลจาก ESP32</h2>
+            <p style="margin-top: 15px; color: var(--text-secondary);">
+                กรุณาตรวจสอบ:<br>
+                • ESP32 เชื่อมต่อ WiFi แล้วหรือไม่<br>
+                • Firebase Database Rules ตั้งค่าถูกต้องหรือไม่<br>
+                • ดู Serial Monitor ว่ามี error หรือไม่
+            </p>
+            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary); border: none; border-radius: 8px; color: white; cursor: pointer;">
+                🔄 Reload หน้าเว็บ
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+
+    <script>
         // ═══════════════════════════════════════════════════════════
         // 🔥 Firebase Configuration - ใส่ข้อมูลเดียวกับใน ESP32
         // ═══════════════════════════════════════════════════════════
@@ -531,11 +638,15 @@
             databaseURL: "https://pms9103-complete-system-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "pms9103-complete-system",
             storageBucket: "pms9103-complete-system.firebasestorage.app",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            messagingSenderId: "0",
+            appId: "1:0:web:0"
         };
 
         const DEVICE_ID = "PMS9103_PLPANYA_001";
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // ═══════════════════════════════════════════════════════════
         // 📊 Chart Setup
@@ -697,119 +808,148 @@
         }
 
         // ═══════════════════════════════════════════════════════════
-        // 🔄 Simulated Real-time Data (Replace with actual Firebase)
+        // 🔥 Firebase Real-time Listeners
         // ═══════════════════════════════════════════════════════════
-        function simulateData() {
-            // This simulates Firebase real-time updates
-            // Replace this with actual Firebase listener when deployed
-            
-            const mockData = {
-                pm1_0: Math.floor(Math.random() * 20) + 5,
-                pm2_5: Math.floor(Math.random() * 50) + 10,
-                pm10: Math.floor(Math.random() * 80) + 20,
-                pm1_0_raw: Math.floor(Math.random() * 25) + 5,
-                pm2_5_raw: Math.floor(Math.random() * 55) + 10,
-                pm10_raw: Math.floor(Math.random() * 85) + 20,
-                pm2_5_avg: Math.floor(Math.random() * 45) + 12,
-                pm2_5_median: Math.floor(Math.random() * 48) + 11,
-                particles: {
-                    um_03: Math.floor(Math.random() * 5000) + 1000,
-                    um_05: Math.floor(Math.random() * 3000) + 500,
-                    um_10: Math.floor(Math.random() * 1000) + 100
-                },
-                aqi: {
-                    level: Math.floor(Math.random() * 3) + 1,
-                    status: "Good"
-                },
-                stats: {
-                    success_rate: 95 + Math.random() * 5,
-                    valid_frames: Math.floor(Math.random() * 100) + 500,
-                    error_frames: Math.floor(Math.random() * 20)
-                },
-                timestamp: new Date().toISOString()
-            };
-
-            currentData = mockData;
-            updateUI(mockData);
-            updateChart(mockData.pm2_5, mockData.timestamp);
-        }
-
-        function simulateStats() {
-            const mockStats = {
-                min_pm25: Math.floor(Math.random() * 15) + 5,
-                max_pm25: Math.floor(Math.random() * 60) + 40,
-                avg_pm25: Math.floor(Math.random() * 30) + 20,
-                sample_count: Math.floor(Math.random() * 500) + 1000,
-                uptime_seconds: Math.floor(Math.random() * 3600) + 7200
-            };
-
-            updateStats(mockStats);
-        }
-
-        function simulateStatus() {
-            const mockStatus = {
-                wifi: {
-                    connected: true,
-                    rssi: -45 - Math.floor(Math.random() * 30),
-                    ip: "192.168.1." + (Math.floor(Math.random() * 200) + 50)
-                }
-            };
-
-            updateWiFiStatus(mockStatus);
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // 🚀 Initialize
-        // ═══════════════════════════════════════════════════════════
-        document.getElementById('connectionStatus').textContent = '✅ เชื่อมต่อสำเร็จ (Simulated)';
-
-        // Initial load
-        simulateData();
-        simulateStats();
-        simulateStatus();
-
-        // Update every 3 seconds (current data)
-        setInterval(simulateData, 3000);
-
-        // Update stats every 30 seconds
-        setInterval(simulateStats, 30000);
-
-        // ═══════════════════════════════════════════════════════════
-        // 📝 To connect with real Firebase:
-        // ═══════════════════════════════════════════════════════════
-        /*
         
-        1. Import Firebase SDK:
-        <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
-
-        2. Initialize Firebase:
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        3. Listen to real-time updates:
+        // Listen to Current Data (อัพเดททุก 10 วินาที จาก ESP32)
         const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
         currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
+                console.log('📥 Received data from Firebase:', data);
+                currentData = data;
                 updateUI(data);
-                updateChart(data.pm2_5, data.timestamp);
+                
+                // Update chart with PM2.5
+                if (data.pm2_5 && data.timestamp) {
+                    updateChart(data.pm2_5, data.timestamp);
+                }
+                
+                // Check air quality alert
+                if (data.pm2_5) {
+                    checkAirQualityAlert(data.pm2_5);
+                }
+                
+                // Reset no data timeout
+                resetNoDataTimeout();
+                
+                // Update connection status
+                document.getElementById('connectionStatus').textContent = '✅ เชื่อมต่อสำเร็จ - Real-time';
             }
+        }, (error) => {
+            console.error('❌ Firebase Error:', error);
+            document.getElementById('connectionStatus').textContent = '❌ เชื่อมต่อล้มเหลว';
         });
 
+        // Listen to Statistics (อัพเดททุก 5 นาที)
         const statsRef = database.ref(`sensors/${DEVICE_ID}/statistics`);
         statsRef.on('value', (snapshot) => {
             const stats = snapshot.val();
-            if (stats) updateStats(stats);
+            if (stats) {
+                console.log('📊 Received stats from Firebase:', stats);
+                updateStats(stats);
+            }
         });
 
+        // Listen to Status
         const statusRef = database.ref(`sensors/${DEVICE_ID}/status`);
         statusRef.on('value', (snapshot) => {
             const status = snapshot.val();
-            if (status) updateWiFiStatus(status);
+            if (status) {
+                console.log('📡 Received status from Firebase:', status);
+                updateWiFiStatus(status);
+            }
         });
 
-        */
+        // ═══════════════════════════════════════════════════════════
+        // 🚀 Initialize
+        // ═══════════════════════════════════════════════════════════
+        console.log('🔥 Firebase initialized');
+        console.log('📍 Listening to:', `sensors/${DEVICE_ID}/`);
+        document.getElementById('connectionStatus').textContent = '⏳ กำลังรอข้อมูล...';
+
+        // ═══════════════════════════════════════════════════════════
+        // ⚠️ Alert System
+        // ═══════════════════════════════════════════════════════════
+        let lastAlertPM25 = 0;
+
+        function checkAirQualityAlert(pm25) {
+            // แจ้งเตือนเมื่อค่าเกิน 55 (Unhealthy for Sensitive Groups)
+            if (pm25 > 55 && lastAlertPM25 <= 55) {
+                showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`, 'warning');
+            }
+            // แจ้งเตือนอันตรายเมื่อเกิน 150
+            if (pm25 > 150 && lastAlertPM25 <= 150) {
+                showAlert(`🚨 อันตราย! PM2.5 = ${pm25} µg/m³ อยู่ในที่ปิดทันที!`, 'danger');
+            }
+            lastAlertPM25 = pm25;
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert-banner alert-${type}`;
+            alertDiv.textContent = message;
+            document.body.appendChild(alertDiv);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alertDiv.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 5000);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // 📥 Download CSV Function
+        // ═══════════════════════════════════════════════════════════
+        function downloadCSV() {
+            if (!currentData || !currentData.pm2_5) {
+                alert('ยังไม่มีข้อมูลให้ดาวน์โหลด');
+                return;
+            }
+
+            const csv = [
+                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'AQI Status', 'AQI Level'],
+                [
+                    currentData.timestamp || new Date().toISOString(),
+                    currentData.pm1_0 || 0,
+                    currentData.pm2_5 || 0,
+                    currentData.pm10 || 0,
+                    currentData.aqi?.status || 'N/A',
+                    currentData.aqi?.level || 0
+                ]
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `PM2.5_${DEVICE_ID}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // 🔍 No Data Detection
+        // ═══════════════════════════════════════════════════════════
+        let noDataTimeout;
+        
+        function resetNoDataTimeout() {
+            clearTimeout(noDataTimeout);
+            document.getElementById('offlineOverlay').style.display = 'none';
+            
+            // ถ้าไม่มีข้อมูลนาน 30 วินาที แสดงข้อความ
+            noDataTimeout = setTimeout(() => {
+                document.getElementById('offlineOverlay').style.display = 'flex';
+            }, 30000);
+        }
+
+        resetNoDataTimeout();
     </script>
+    <style>
+        @keyframes slideOutRight {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>
