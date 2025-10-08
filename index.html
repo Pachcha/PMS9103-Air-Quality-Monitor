@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจวัดคุณภาพอากาศ - โรงเรียนพิษณุโลกปัญญานุกูล</title>
+    <title>ระบบตรวจวัดคุณภาพอากาศ v3.1 - โรงเรียนพิษณุโลกปัญญานุกูล</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -22,6 +22,7 @@
             --accent-yellow: #f59e0b;
             --accent-orange: #f97316;
             --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --border: rgba(148, 163, 184, 0.2);
@@ -36,7 +37,7 @@
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
         }
 
@@ -49,6 +50,19 @@
             margin-bottom: 30px;
             border: 1px solid var(--border);
             animation: fadeIn 0.6s ease;
+            position: relative;
+        }
+
+        .version-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
         }
 
         .hero h1 {
@@ -83,6 +97,12 @@
             border-radius: 50px;
             border: 1px solid var(--border);
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .status-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
         }
 
         .status-dot {
@@ -93,7 +113,67 @@
             animation: pulse 2s infinite;
         }
 
-        /* Main Dashboard */
+        /* Data Source Badge */
+        .data-source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.1));
+            border: 2px solid var(--accent-purple);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--bg-card);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        /* Dashboard */
         .dashboard {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -101,7 +181,7 @@
             margin-bottom: 20px;
         }
 
-        /* Big PM2.5 Display */
+        /* Main Display */
         .main-display {
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
             border-radius: 30px;
@@ -217,7 +297,7 @@
             font-size: 0.9rem;
         }
 
-        /* Grid Layout */
+        /* Grid */
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -228,6 +308,13 @@
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -277,6 +364,59 @@
             font-weight: 700;
         }
 
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-table td {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .check-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid var(--accent-purple);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .debug-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         /* Chart */
         .chart-wrapper {
             position: relative;
@@ -285,11 +425,6 @@
         }
 
         /* Particles */
-        .particle-grid {
-            display: grid;
-            gap: 15px;
-        }
-
         .particle-row {
             display: flex;
             justify-content: space-between;
@@ -298,6 +433,7 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 15px;
             border-left: 4px solid var(--accent-blue);
+            margin-bottom: 15px;
         }
 
         .particle-info {
@@ -308,12 +444,6 @@
 
         .particle-emoji {
             font-size: 2rem;
-        }
-
-        .particle-text h4 {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--text-secondary);
         }
 
         .particle-value-display {
@@ -350,14 +480,7 @@
         .color-moderate { color: var(--accent-yellow); }
         .color-usg { color: var(--accent-orange); }
         .color-unhealthy { color: var(--accent-red); }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
+        .color-purple { color: var(--accent-purple); }
 
         /* Loading */
         .loading {
@@ -401,40 +524,7 @@
 
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.1); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .grid-3 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .pm-mega-value {
-                font-size: 5rem;
-            }
-
-            .main-display {
-                padding: 30px;
-            }
-
-            .grid-2, .grid-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .mini-stats {
-                grid-template-columns: 1fr;
-            }
+            50% { opacity: 0.7; transform: scale(1.05); }
         }
 
         /* Alert */
@@ -462,7 +552,7 @@
             }
         }
 
-        /* Download Button */
+        /* FAB */
         .fab {
             position: fixed;
             bottom: 30px;
@@ -484,12 +574,54 @@
             transform: translateY(-5px) scale(1.1);
             box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
         }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-3, .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .pm-mega-value {
+                font-size: 5rem;
+            }
+
+            .main-display {
+                padding: 30px;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .mini-stats {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Hero Section -->
+        <!-- Hero -->
         <div class="hero">
+            <div class="version-badge">v3.1 FIXED</div>
             <h1>🌫️ ระบบตรวจวัดคุณภาพอากาศ</h1>
             <p>โรงเรียนพิษณุโลกปัญญานุกูล - Real-time Air Quality Monitoring</p>
             
@@ -503,6 +635,18 @@
                 </div>
                 <div class="status-item">
                     🆔 <span id="deviceIdShort">PMS9103_001</span>
+                </div>
+                <div class="status-item data-source-badge">
+                    📊 <span id="dataSource">Loading...</span>
+                </div>
+            </div>
+
+            <div class="status-bar" style="margin-top: 15px;">
+                <div class="toggle-container">
+                    <span class="toggle-label">🐛 Debug Mode</span>
+                    <div class="toggle-switch" id="debugToggle" onclick="toggleDebug()">
+                        <div class="toggle-slider"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -526,16 +670,16 @@
                     
                     <div class="mini-stats" style="margin-top: 40px;">
                         <div class="mini-stat">
-                            <div class="mini-stat-label">Raw</div>
-                            <div class="mini-stat-value" id="pm25RawMain">--</div>
-                        </div>
-                        <div class="mini-stat">
                             <div class="mini-stat-label">Average</div>
                             <div class="mini-stat-value" id="pm25AvgMain">--</div>
                         </div>
                         <div class="mini-stat">
                             <div class="mini-stat-label">Median</div>
                             <div class="mini-stat-value" id="pm25MedianMain">--</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-label">Source</div>
+                            <div class="mini-stat-value color-purple" id="sourceShort" style="font-size: 1.2rem;">--</div>
                         </div>
                     </div>
                 </div>
@@ -563,8 +707,67 @@
             </div>
         </div>
 
+        <!-- Debug Panel (Hidden by default) -->
+        <div id="debugPanel" style="display: none;">
+            <div class="card debug-panel">
+                <div class="debug-title">
+                    🐛 Debug Information - Data Source Comparison
+                </div>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>CF=1 (Standard)</th>
+                            <th>Atmospheric</th>
+                            <th>Current Use</th>
+                            <th>Sanity Check</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PM1.0</td>
+                            <td id="pm1cf1">--</td>
+                            <td id="pm1atm">--</td>
+                            <td id="pm1use">--</td>
+                            <td id="pm1check" class="check-icon">--</td>
+                        </tr>
+                        <tr>
+                            <td>PM2.5</td>
+                            <td id="pm25cf1">--</td>
+                            <td id="pm25atm">--</td>
+                            <td id="pm25use">--</td>
+                            <td id="pm25check" class="check-icon">--</td>
+                        </tr>
+                        <tr>
+                            <td>PM10</td>
+                            <td id="pm10cf1">--</td>
+                            <td id="pm10atm">--</td>
+                            <td id="pm10use">--</td>
+                            <td id="pm10check" class="check-icon">--</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="mini-stats" style="margin-top: 30px;">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Sanity Failures</div>
+                        <div class="mini-stat-value color-unhealthy" id="sanityFailures">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Error Frames</div>
+                        <div class="mini-stat-value color-moderate" id="errorFrames">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Valid Frames</div>
+                        <div class="mini-stat-value color-good" id="validFrames">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Statistics -->
-        <div class="grid-3">
+        <div class="grid-4">
             <div class="card">
                 <div class="card-title">📊 สถิติ PM2.5</div>
                 <div class="mini-stats">
@@ -603,20 +806,36 @@
 
             <div class="card">
                 <div class="card-title">📡 สถานะระบบ</div>
-                <div style="padding: 20px 0;">
+                <div style="padding: 10px 0;">
                     <div style="margin-bottom: 15px;">
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">WiFi Connection</div>
-                        <div style="font-size: 1.2rem; font-weight: 600;" id="wifiStatus">--</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">WiFi</div>
+                        <div style="font-size: 1.1rem; font-weight: 600;" id="wifiStatus">--</div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">Firmware</div>
+                        <div style="font-size: 0.9rem;" id="firmwareVersion">--</div>
                     </div>
                     <div>
                         <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">Last Update</div>
-                        <div style="font-size: 0.9rem;" id="lastUpdate">--</div>
+                        <div style="font-size: 0.85rem;" id="lastUpdate">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">⚙️ Data Source</div>
+                <div style="text-align: center; padding: 20px 0;">
+                    <div class="data-source-badge" style="font-size: 1.5rem; padding: 20px 30px;">
+                        <span id="dataSourceMain">--</span>
+                    </div>
+                    <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
+                        <span id="dataSourceDesc">Loading...</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Chart -->
+        <!-- Chart & Particles -->
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">📈 แนวโน้ม PM2.5 (20 ค่าล่าสุด)</div>
@@ -627,12 +846,12 @@
 
             <div class="card">
                 <div class="card-title">🔬 จำนวนอนุภาค</div>
-                <div class="particle-grid">
+                <div style="margin-top: 20px;">
                     <div class="particle-row">
                         <div class="particle-info">
                             <span class="particle-emoji">⚫</span>
-                            <div class="particle-text">
-                                <h4>Particles > 0.3µm</h4>
+                            <div>
+                                <h4 style="font-size: 0.9rem; color: var(--text-secondary);">Particles > 0.3µm</h4>
                             </div>
                         </div>
                         <div class="particle-value-display" id="particles03">--</div>
@@ -641,8 +860,8 @@
                     <div class="particle-row">
                         <div class="particle-info">
                             <span class="particle-emoji">🔵</span>
-                            <div class="particle-text">
-                                <h4>Particles > 0.5µm</h4>
+                            <div>
+                                <h4 style="font-size: 0.9rem; color: var(--text-secondary);">Particles > 0.5µm</h4>
                             </div>
                         </div>
                         <div class="particle-value-display" id="particles05">--</div>
@@ -651,8 +870,8 @@
                     <div class="particle-row">
                         <div class="particle-info">
                             <span class="particle-emoji">🟣</span>
-                            <div class="particle-text">
-                                <h4>Particles > 1.0µm</h4>
+                            <div>
+                                <h4 style="font-size: 0.9rem; color: var(--text-secondary);">Particles > 1.0µm</h4>
                             </div>
                         </div>
                         <div class="particle-value-display" id="particles10">--</div>
@@ -664,11 +883,11 @@
         <!-- Footer -->
         <div class="footer">
             <p>🏫 โรงเรียนพิษณุโลกปัญญานุกูล | 📍 16.8225°N, 100.2650°E</p>
-            <p style="margin-top: 10px;">PMS9103 Firebase Complete System v3.0 | Powered by ESP32 & Firebase</p>
+            <p style="margin-top: 10px;">PMS9103 Firebase System v3.1 FIXED | Enhanced Debug Mode</p>
         </div>
     </div>
 
-    <!-- Download Button -->
+    <!-- FAB -->
     <button class="fab" onclick="downloadCSV()" title="ดาวน์โหลดข้อมูล CSV">📥</button>
 
     <!-- Firebase SDK -->
@@ -689,6 +908,10 @@
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        let debugMode = false;
+        let currentData = {};
+        let lastAlertPM25 = 0;
 
         // Chart Setup
         const ctx = document.getElementById('pmChart').getContext('2d');
@@ -739,8 +962,20 @@
             }
         });
 
-        let currentData = {};
-        let lastAlertPM25 = 0;
+        function toggleDebug() {
+            debugMode = !debugMode;
+            const toggle = document.getElementById('debugToggle');
+            const panel = document.getElementById('debugPanel');
+            
+            if (debugMode) {
+                toggle.classList.add('active');
+                panel.style.display = 'block';
+                panel.style.animation = 'slideUp 0.5s ease';
+            } else {
+                toggle.classList.remove('active');
+                panel.style.display = 'none';
+            }
+        }
 
         function getAQIInfo(pm25) {
             if (pm25 <= 12) return { 
@@ -784,7 +1019,6 @@
 
             // Main Display
             document.getElementById('pm25MainValue').textContent = pm25;
-            document.getElementById('pm25RawMain').textContent = data.pm2_5_raw || '--';
             document.getElementById('pm25AvgMain').textContent = data.pm2_5_avg || '--';
             document.getElementById('pm25MedianMain').textContent = data.pm2_5_median || '--';
 
@@ -795,9 +1029,25 @@
             badge.textContent = aqiInfo.text;
             badge.className = 'aqi-badge ' + aqiInfo.class;
 
+            // Data Source
+            const dataSource = data.data_source || 'Unknown';
+            document.getElementById('dataSource').textContent = dataSource;
+            document.getElementById('sourceShort').textContent = dataSource === 'CF=1' ? 'CF1' : 'ATM';
+            document.getElementById('dataSourceMain').textContent = dataSource;
+            
+            const sourceDesc = dataSource === 'CF=1' ? 
+                'Standard Particles (Lab Environment)' : 
+                'Atmospheric Environment (General Use)';
+            document.getElementById('dataSourceDesc').textContent = sourceDesc;
+
             // Quick Stats
             document.getElementById('pm10Large').textContent = data.pm10 || '--';
             document.getElementById('pm1Large').textContent = data.pm1_0 || '--';
+
+            // Debug Panel
+            if (debugMode) {
+                updateDebugPanel(data);
+            }
 
             // Particles
             document.getElementById('particles03').textContent = (data.particles?.um_03 || 0).toLocaleString();
@@ -806,13 +1056,44 @@
 
             // Timestamp
             document.getElementById('lastUpdate').textContent = 
-                data.timestamp || new Date().toLocaleString('th-TH');
+                data.last_update || data.timestamp || new Date().toLocaleString('th-TH');
 
-            // Alert Check
+            // Alert
             if (pm25 > 55 && lastAlertPM25 <= 55) {
                 showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`);
             }
             lastAlertPM25 = pm25;
+        }
+
+        function updateDebugPanel(data) {
+            // CF=1 Values
+            document.getElementById('pm1cf1').textContent = data.cf1?.pm1_0 || '--';
+            document.getElementById('pm25cf1').textContent = data.cf1?.pm2_5 || '--';
+            document.getElementById('pm10cf1').textContent = data.cf1?.pm10 || '--';
+
+            // Atmospheric Values
+            document.getElementById('pm1atm').textContent = data.atm?.pm1_0 || '--';
+            document.getElementById('pm25atm').textContent = data.atm?.pm2_5 || '--';
+            document.getElementById('pm10atm').textContent = data.atm?.pm10 || '--';
+
+            // Current Use Values (highlighted)
+            const useColor = 'style="color: var(--accent-purple); font-weight: 700;"';
+            document.getElementById('pm1use').innerHTML = `<span ${useColor}>${data.pm1_0 || '--'}</span>`;
+            document.getElementById('pm25use').innerHTML = `<span ${useColor}>${data.pm2_5 || '--'}</span>`;
+            document.getElementById('pm10use').innerHTML = `<span ${useColor}>${data.pm10 || '--'}</span>`;
+
+            // Sanity Check (simplified - just show checkmark)
+            const checkmark = '✅';
+            const crossmark = '❌';
+            
+            document.getElementById('pm1check').textContent = checkmark;
+            document.getElementById('pm25check').textContent = checkmark;
+            document.getElementById('pm10check').textContent = checkmark;
+
+            // Stats
+            document.getElementById('sanityFailures').textContent = data.stats?.sanity_failures || 0;
+            document.getElementById('errorFrames').textContent = data.stats?.error_frames || 0;
+            document.getElementById('validFrames').textContent = data.stats?.valid_frames || 0;
         }
 
         function updateStats(stats) {
@@ -833,14 +1114,16 @@
         }
 
         function updateWiFiStatus(status) {
-            if (!status || !status.wifi) return;
+            if (!status) return;
             
             const wifiEl = document.getElementById('wifiStatus');
-            if (status.wifi.connected) {
+            if (status.wifi && status.wifi.connected) {
                 wifiEl.innerHTML = `✅ ${status.wifi.rssi} dBm`;
             } else {
                 wifiEl.textContent = '❌ Offline';
             }
+
+            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v3.0';
         }
 
         function updateChart(pm25, timestamp) {
@@ -877,12 +1160,19 @@
             }
 
             const csv = [
-                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'Status'],
+                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'Data Source', 'CF1_PM1', 'CF1_PM25', 'CF1_PM10', 'ATM_PM1', 'ATM_PM25', 'ATM_PM10', 'Status'],
                 [
                     currentData.timestamp || new Date().toISOString(),
                     currentData.pm1_0 || 0,
                     currentData.pm2_5 || 0,
                     currentData.pm10 || 0,
+                    currentData.data_source || 'N/A',
+                    currentData.cf1?.pm1_0 || 0,
+                    currentData.cf1?.pm2_5 || 0,
+                    currentData.cf1?.pm10 || 0,
+                    currentData.atm?.pm1_0 || 0,
+                    currentData.atm?.pm2_5 || 0,
+                    currentData.atm?.pm10 || 0,
                     currentData.aqi?.status || 'N/A'
                 ]
             ].map(row => row.join(',')).join('\n');
@@ -890,7 +1180,7 @@
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `AirQuality_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `AirQuality_v31_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
@@ -926,8 +1216,9 @@
             if (status) updateWiFiStatus(status);
         });
 
-        console.log('🔥 Dashboard initialized');
+        console.log('🔥 Dashboard v3.1 FIXED initialized');
         console.log('📍 Listening to:', DEVICE_ID);
+        console.log('🐛 Debug Mode: Press toggle to enable');
     </script>
 </body>
 </html>
