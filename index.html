@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจวัดคุณภาพอากาศ v3.1 - โรงเรียนพิษณุโลกปัญญานุกูล</title>
+    <title>ระบบตรวจวัดคุณภาพอากาศ v3.1 HYBRID - โรงเรียนพิษณุโลกปัญญานุกูล</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -41,7 +41,6 @@
             margin: 0 auto;
         }
 
-        /* Hero Section */
         .hero {
             text-align: center;
             padding: 40px 20px;
@@ -113,7 +112,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* Data Source Badge */
         .data-source-badge {
             display: inline-flex;
             align-items: center;
@@ -126,7 +124,6 @@
             font-size: 0.9rem;
         }
 
-        /* Toggle Switch */
         .toggle-container {
             display: flex;
             align-items: center;
@@ -173,7 +170,6 @@
             transform: translateX(30px);
         }
 
-        /* Dashboard */
         .dashboard {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -181,7 +177,6 @@
             margin-bottom: 20px;
         }
 
-        /* Main Display */
         .main-display {
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
             border-radius: 30px;
@@ -245,7 +240,6 @@
             letter-spacing: 1px;
         }
 
-        /* Quick Stats */
         .quick-stats {
             display: grid;
             gap: 20px;
@@ -297,7 +291,6 @@
             font-size: 0.9rem;
         }
 
-        /* Grid */
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -319,7 +312,6 @@
             margin-bottom: 20px;
         }
 
-        /* Card */
         .card {
             background: var(--bg-secondary);
             border-radius: 20px;
@@ -337,7 +329,6 @@
             gap: 10px;
         }
 
-        /* Mini Stats */
         .mini-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -364,7 +355,6 @@
             font-weight: 700;
         }
 
-        /* Comparison Table */
         .comparison-table {
             width: 100%;
             border-collapse: collapse;
@@ -398,7 +388,6 @@
             font-size: 1.5rem;
         }
 
-        /* Debug Panel */
         .debug-panel {
             background: rgba(139, 92, 246, 0.1);
             border: 2px solid var(--accent-purple);
@@ -417,14 +406,12 @@
             gap: 10px;
         }
 
-        /* Chart */
         .chart-wrapper {
             position: relative;
             height: 350px;
             margin-top: 20px;
         }
 
-        /* Particles */
         .particle-row {
             display: flex;
             justify-content: space-between;
@@ -451,7 +438,6 @@
             font-weight: 700;
         }
 
-        /* AQI Colors */
         .aqi-good { 
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
             color: var(--accent-green);
@@ -482,7 +468,6 @@
         .color-unhealthy { color: var(--accent-red); }
         .color-purple { color: var(--accent-purple); }
 
-        /* Loading */
         .loading {
             display: flex;
             flex-direction: column;
@@ -501,7 +486,6 @@
             animation: spin 1s linear infinite;
         }
 
-        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -527,7 +511,6 @@
             50% { opacity: 0.7; transform: scale(1.05); }
         }
 
-        /* Alert */
         .alert {
             position: fixed;
             top: 20px;
@@ -552,7 +535,6 @@
             }
         }
 
-        /* FAB */
         .fab {
             position: fixed;
             bottom: 30px;
@@ -575,7 +557,6 @@
             box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px;
@@ -583,7 +564,6 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
         @media (max-width: 1200px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -619,9 +599,8 @@
 </head>
 <body>
     <div class="container">
-        <!-- Hero -->
         <div class="hero">
-            <div class="version-badge">v3.1 FIXED</div>
+            <div class="version-badge">v3.1 HYBRID</div>
             <h1>🌫️ ระบบตรวจวัดคุณภาพอากาศ</h1>
             <p>โรงเรียนพิษณุโลกปัญญานุกูล - Real-time Air Quality Monitoring</p>
             
@@ -651,9 +630,7 @@
             </div>
         </div>
 
-        <!-- Main Dashboard -->
         <div class="dashboard">
-            <!-- Main PM2.5 Display -->
             <div class="main-display">
                 <div id="mainLoading" class="loading">
                     <div class="spinner"></div>
@@ -685,7 +662,6 @@
                 </div>
             </div>
 
-            <!-- Quick Stats -->
             <div class="quick-stats">
                 <div class="stat-card">
                     <div class="stat-header">
@@ -707,7 +683,6 @@
             </div>
         </div>
 
-        <!-- Debug Panel (Hidden by default) -->
         <div id="debugPanel" style="display: none;">
             <div class="card debug-panel">
                 <div class="debug-title">
@@ -766,7 +741,6 @@
             </div>
         </div>
 
-        <!-- Statistics -->
         <div class="grid-4">
             <div class="card">
                 <div class="card-title">📊 สถิติ PM2.5</div>
@@ -835,7 +809,6 @@
             </div>
         </div>
 
-        <!-- Chart & Particles -->
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">📈 แนวโน้ม PM2.5 (20 ค่าล่าสุด)</div>
@@ -880,22 +853,18 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <div class="footer">
             <p>🏫 โรงเรียนพิษณุโลกปัญญานุกูล | 📍 16.8225°N, 100.2650°E</p>
-            <p style="margin-top: 10px;">PMS9103 Firebase System v3.1 FIXED | Enhanced Debug Mode</p>
+            <p style="margin-top: 10px;">PMS9103 Firebase System v3.1 HYBRID | CF=1 for PM1/PM2.5 + ATM for PM10</p>
         </div>
     </div>
 
-    <!-- FAB -->
     <button class="fab" onclick="downloadCSV()" title="ดาวน์โหลดข้อมูล CSV">📥</button>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyD3zfXIGjpWruTXA7C_cl23hm3xu_EK9Kw",
             authDomain: "pms9103-complete-system.firebaseapp.com",
@@ -913,7 +882,6 @@
         let currentData = {};
         let lastAlertPM25 = 0;
 
-        // Chart Setup
         const ctx = document.getElementById('pmChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
@@ -1017,7 +985,6 @@
             const pm25 = data.pm2_5 || 0;
             const aqiInfo = getAQIInfo(pm25);
 
-            // Main Display
             document.getElementById('pm25MainValue').textContent = pm25;
             document.getElementById('pm25AvgMain').textContent = data.pm2_5_avg || '--';
             document.getElementById('pm25MedianMain').textContent = data.pm2_5_median || '--';
@@ -1029,36 +996,44 @@
             badge.textContent = aqiInfo.text;
             badge.className = 'aqi-badge ' + aqiInfo.class;
 
-            // Data Source
             const dataSource = data.data_source || 'Unknown';
             document.getElementById('dataSource').textContent = dataSource;
-            document.getElementById('sourceShort').textContent = dataSource === 'CF=1' ? 'CF1' : 'ATM';
+            
+            let sourceShort = dataSource;
+            if (dataSource.includes('Hybrid')) {
+                sourceShort = 'Hybrid';
+            } else if (dataSource === 'CF=1') {
+                sourceShort = 'CF1';
+            } else if (dataSource === 'Atmospheric') {
+                sourceShort = 'ATM';
+            }
+            document.getElementById('sourceShort').textContent = sourceShort;
             document.getElementById('dataSourceMain').textContent = dataSource;
             
-            const sourceDesc = dataSource === 'CF=1' ? 
-                'Standard Particles (Lab Environment)' : 
-                'Atmospheric Environment (General Use)';
+            let sourceDesc = '';
+            if (dataSource.includes('Hybrid')) {
+                sourceDesc = '⭐ Hybrid: CF=1 for PM1/PM2.5, Atmospheric for PM10';
+            } else if (dataSource === 'CF=1') {
+                sourceDesc = 'Standard Particles (Lab Environment)';
+            } else {
+                sourceDesc = 'Atmospheric Environment (General Use)';
+            }
             document.getElementById('dataSourceDesc').textContent = sourceDesc;
 
-            // Quick Stats
             document.getElementById('pm10Large').textContent = data.pm10 || '--';
             document.getElementById('pm1Large').textContent = data.pm1_0 || '--';
 
-            // Debug Panel
             if (debugMode) {
                 updateDebugPanel(data);
             }
 
-            // Particles
             document.getElementById('particles03').textContent = (data.particles?.um_03 || 0).toLocaleString();
             document.getElementById('particles05').textContent = (data.particles?.um_05 || 0).toLocaleString();
             document.getElementById('particles10').textContent = (data.particles?.um_10 || 0).toLocaleString();
 
-            // Timestamp
             document.getElementById('lastUpdate').textContent = 
                 data.last_update || data.timestamp || new Date().toLocaleString('th-TH');
 
-            // Alert
             if (pm25 > 55 && lastAlertPM25 <= 55) {
                 showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`);
             }
@@ -1066,31 +1041,24 @@
         }
 
         function updateDebugPanel(data) {
-            // CF=1 Values
             document.getElementById('pm1cf1').textContent = data.cf1?.pm1_0 || '--';
             document.getElementById('pm25cf1').textContent = data.cf1?.pm2_5 || '--';
             document.getElementById('pm10cf1').textContent = data.cf1?.pm10 || '--';
 
-            // Atmospheric Values
             document.getElementById('pm1atm').textContent = data.atm?.pm1_0 || '--';
             document.getElementById('pm25atm').textContent = data.atm?.pm2_5 || '--';
             document.getElementById('pm10atm').textContent = data.atm?.pm10 || '--';
 
-            // Current Use Values (highlighted)
             const useColor = 'style="color: var(--accent-purple); font-weight: 700;"';
             document.getElementById('pm1use').innerHTML = `<span ${useColor}>${data.pm1_0 || '--'}</span>`;
             document.getElementById('pm25use').innerHTML = `<span ${useColor}>${data.pm2_5 || '--'}</span>`;
             document.getElementById('pm10use').innerHTML = `<span ${useColor}>${data.pm10 || '--'}</span>`;
 
-            // Sanity Check (simplified - just show checkmark)
             const checkmark = '✅';
-            const crossmark = '❌';
-            
             document.getElementById('pm1check').textContent = checkmark;
             document.getElementById('pm25check').textContent = checkmark;
             document.getElementById('pm10check').textContent = checkmark;
 
-            // Stats
             document.getElementById('sanityFailures').textContent = data.stats?.sanity_failures || 0;
             document.getElementById('errorFrames').textContent = data.stats?.error_frames || 0;
             document.getElementById('validFrames').textContent = data.stats?.valid_frames || 0;
@@ -1123,7 +1091,7 @@
                 wifiEl.textContent = '❌ Offline';
             }
 
-            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v3.0';
+            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v3.1-HYBRID';
         }
 
         function updateChart(pm25, timestamp) {
@@ -1180,11 +1148,10 @@
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `AirQuality_v31_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `AirQuality_v31_Hybrid_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
-        // Firebase Listeners
         const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
         currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1216,9 +1183,10 @@
             if (status) updateWiFiStatus(status);
         });
 
-        console.log('🔥 Dashboard v3.1 FIXED initialized');
+        console.log('🔥 Dashboard v3.1 HYBRID initialized');
         console.log('📍 Listening to:', DEVICE_ID);
         console.log('🐛 Debug Mode: Press toggle to enable');
+        console.log('⭐ Hybrid Mode: CF=1 for PM1/PM2.5, ATM for PM10');
     </script>
 </body>
 </html>
