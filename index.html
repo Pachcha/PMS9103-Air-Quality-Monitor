@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PMS9103 Air Quality Monitor - โรงเรียนพิษณุโลกปัญญานุกูล</title>
+    <title>ระบบตรวจวัดคุณภาพอากาศ - โรงเรียนพิษณุโลกปัญญานุกูล</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,257 +14,349 @@
         }
 
         :root {
-            --bg-dark: #0a0e27;
-            --bg-card: #1a1f3a;
-            --bg-card-hover: #252b4a;
-            --primary: #00d4ff;
-            --secondary: #a78bfa;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --text-primary: #ffffff;
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
-            --border: rgba(255, 255, 255, 0.1);
+            --border: rgba(148, 163, 184, 0.2);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
-            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
-        /* Header */
-        .header {
+        /* Hero Section */
+        .hero {
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.6s ease;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border-radius: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.6s ease;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
+        .hero h1 {
+            font-size: 3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #3b82f6, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
-        .header p {
+        .hero p {
+            font-size: 1.2rem;
             color: var(--text-secondary);
-            font-size: 1.1rem;
+            font-weight: 300;
         }
 
-        .status-badge {
-            display: inline-flex;
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
-            background: var(--bg-card);
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
             border: 1px solid var(--border);
-            border-radius: 20px;
-            margin-top: 15px;
             font-size: 0.9rem;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: var(--success);
+            background: var(--accent-green);
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Grid Layout */
-        .grid {
+        /* Main Dashboard */
+        .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 2fr 1fr;
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        /* Card */
-        .card {
-            background: var(--bg-card);
+        /* Big PM2.5 Display */
+        .main-display {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.6s ease;
             position: relative;
             overflow: hidden;
+            animation: slideUp 0.6s ease;
         }
 
-        .card::before {
+        .main-display::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
         }
 
-        .card:hover {
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .main-display-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .pm-label {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .pm-mega-value {
+            font-size: 8rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .pm-unit-large {
+            font-size: 2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .aqi-badge {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease;
+        }
+
+        .stat-card:hover {
             transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
         }
 
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .card-header {
+        .stat-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .card-title {
-            font-size: 1rem;
+        .stat-title {
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .card-icon {
-            font-size: 1.5rem;
+        .stat-icon {
+            font-size: 2rem;
         }
 
-        /* PM Value Display */
-        .pm-value {
-            font-size: 3.5rem;
+        .stat-value-large {
+            font-size: 3rem;
             font-weight: 700;
             line-height: 1;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
-        .pm-unit {
-            font-size: 1rem;
+        .stat-subtitle {
             color: var(--text-secondary);
-            margin-left: 5px;
-        }
-
-        .pm-status {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
             margin-top: 10px;
-        }
-
-        /* AQI Status Colors */
-        .aqi-good { 
-            background: rgba(16, 185, 129, 0.2); 
-            color: var(--success);
-            border: 1px solid var(--success);
-        }
-        .aqi-moderate { 
-            background: rgba(245, 158, 11, 0.2); 
-            color: var(--warning);
-            border: 1px solid var(--warning);
-        }
-        .aqi-unhealthy { 
-            background: rgba(239, 68, 68, 0.2); 
-            color: var(--danger);
-            border: 1px solid var(--danger);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* Chart Container */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
-        }
-
-        /* Particles Display */
-        .particles-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .particle-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid var(--primary);
-        }
-
-        .particle-label {
-            color: var(--text-secondary);
             font-size: 0.9rem;
         }
 
-        .particle-value {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
-        /* Location Info */
-        .location-info {
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            animation: slideUp 0.6s ease;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            margin-top: 15px;
+        }
+
+        /* Mini Stats */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .mini-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .mini-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .mini-stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* Chart */
+        .chart-wrapper {
+            position: relative;
+            height: 350px;
+            margin-top: 20px;
+        }
+
+        /* Particles */
+        .particle-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .particle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .particle-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .particle-emoji {
+            font-size: 2rem;
+        }
+
+        .particle-text h4 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .particle-value-display {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* AQI Colors */
+        .aqi-good { 
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+        }
+
+        .aqi-moderate { 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.1));
+            color: var(--accent-yellow);
+            border: 2px solid var(--accent-yellow);
+        }
+
+        .aqi-usg { 
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(249, 115, 22, 0.1));
+            color: var(--accent-orange);
+            border: 2px solid var(--accent-orange);
+        }
+
+        .aqi-unhealthy { 
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
+            color: var(--accent-red);
+            border: 2px solid var(--accent-red);
+        }
+
+        .color-good { color: var(--accent-green); }
+        .color-moderate { color: var(--accent-yellow); }
+        .color-usg { color: var(--accent-orange); }
+        .color-unhealthy { color: var(--accent-red); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         /* Loading */
@@ -272,101 +365,95 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 200px;
-            gap: 15px;
+            gap: 20px;
+            padding: 60px;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--primary);
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--accent-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
+            .hero h1 {
+                font-size: 2rem;
             }
-            
-            .pm-value {
-                font-size: 2.5rem;
+
+            .pm-mega-value {
+                font-size: 5rem;
             }
-            
-            .stats-grid {
+
+            .main-display {
+                padding: 30px;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .mini-stats {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Error State */
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: var(--danger);
-        }
-
-        .timestamp {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        /* Alert Banner */
-        .alert-banner {
+        /* Alert */
+        .alert {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 20px;
-            border-radius: 12px;
+            padding: 20px 30px;
+            border-radius: 15px;
             font-weight: 600;
             z-index: 1000;
             animation: slideInRight 0.5s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .alert-danger {
-            background: rgba(239, 68, 68, 0.95);
-            border: 1px solid var(--danger);
-        }
-
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.95);
-            border: 1px solid var(--warning);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
         }
 
         @keyframes slideInRight {
             from {
-                transform: translateX(400px);
+                transform: translateX(500px);
                 opacity: 0;
             }
             to {
@@ -376,388 +463,356 @@
         }
 
         /* Download Button */
-        .download-btn {
+        .fab {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            padding: 15px 25px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
             border: none;
-            border-radius: 50px;
+            border-radius: 50%;
             color: white;
-            font-weight: 600;
+            font-size: 1.5rem;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
             transition: all 0.3s ease;
             z-index: 999;
         }
 
-        .download-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.5);
-        }
-
-        /* Offline Indicator */
-        .offline-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .offline-message {
-            background: var(--bg-card);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            border: 2px solid var(--danger);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .fab:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🌫️ PMS9103 Air Quality Monitor</h1>
-            <p>โรงเรียนพิษณุโลกปัญญานุกูล - ระบบตรวจวัดคุณภาพอากาศแบบเรียลไทม์</p>
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                <span id="connectionStatus">กำลังเชื่อมต่อ...</span>
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>🌫️ ระบบตรวจวัดคุณภาพอากาศ</h1>
+            <p>โรงเรียนพิษณุโลกปัญญานุกูล - Real-time Air Quality Monitoring</p>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span id="connectionStatus">กำลังเชื่อมต่อ...</span>
+                </div>
+                <div class="status-item">
+                    📍 พิษณุโลก
+                </div>
+                <div class="status-item">
+                    🆔 <span id="deviceIdShort">PMS9103_001</span>
+                </div>
             </div>
         </div>
 
-        <!-- Main Grid -->
-        <div class="grid">
-            <!-- PM2.5 Card -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">PM2.5</span>
-                    <span class="card-icon">😷</span>
-                </div>
-                <div id="pm25Loading" class="loading">
+        <!-- Main Dashboard -->
+        <div class="dashboard">
+            <!-- Main PM2.5 Display -->
+            <div class="main-display">
+                <div id="mainLoading" class="loading">
                     <div class="spinner"></div>
-                    <p>กำลังโหลดข้อมูล...</p>
+                    <p style="font-size: 1.2rem;">กำลังโหลดข้อมูล...</p>
                 </div>
-                <div id="pm25Content" style="display: none;">
-                    <div class="pm-value">
-                        <span id="pm25Value">--</span>
-                        <span class="pm-unit">µg/m³</span>
+                
+                <div id="mainContent" class="main-display-content" style="display: none;">
+                    <div class="pm-label">PM2.5 ฝุ่นละอองขนาดเล็ก</div>
+                    <div class="pm-mega-value" id="pm25Mega">
+                        <span id="pm25MainValue">--</span>
                     </div>
-                    <span id="pm25Status" class="pm-status">--</span>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">Raw</div>
-                            <div class="stat-value" id="pm25Raw">--</div>
+                    <div class="pm-unit-large">µg/m³</div>
+                    <div class="aqi-badge" id="aqiBadge">กำลังโหลด...</div>
+                    
+                    <div class="mini-stats" style="margin-top: 40px;">
+                        <div class="mini-stat">
+                            <div class="mini-stat-label">Raw</div>
+                            <div class="mini-stat-value" id="pm25RawMain">--</div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Avg</div>
-                            <div class="stat-value" id="pm25Avg">--</div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-label">Average</div>
+                            <div class="mini-stat-value" id="pm25AvgMain">--</div>
                         </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Median</div>
-                            <div class="stat-value" id="pm25Median">--</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PM10 Card -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">PM10</span>
-                    <span class="card-icon">🌪️</span>
-                </div>
-                <div id="pm10Content">
-                    <div class="pm-value">
-                        <span id="pm10Value">--</span>
-                        <span class="pm-unit">µg/m³</span>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">Raw</div>
-                            <div class="stat-value" id="pm10Raw">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">PM1.0</div>
-                            <div class="stat-value" id="pm1Value">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Level</div>
-                            <div class="stat-value" id="aqiLevel">--</div>
+                        <div class="mini-stat">
+                            <div class="mini-stat-label">Median</div>
+                            <div class="mini-stat-value" id="pm25MedianMain">--</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Statistics Card -->
-            <div class="card">
-                <div class="card-header">
-                    <span class="card-title">📊 Statistics</span>
-                    <span class="card-icon">📈</span>
-                </div>
-                <div id="statsContent">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">Min</div>
-                            <div class="stat-value" id="statsMin">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Max</div>
-                            <div class="stat-value" id="statsMax">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Average</div>
-                            <div class="stat-value" id="statsAvg">--</div>
-                        </div>
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">PM10</span>
+                        <span class="stat-icon">🌪️</span>
                     </div>
-                    <div class="stats-grid" style="margin-top: 15px;">
-                        <div class="stat-item">
-                            <div class="stat-label">Samples</div>
-                            <div class="stat-value" id="statsSamples">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Success</div>
-                            <div class="stat-value" id="statsSuccess">--</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Uptime</div>
-                            <div class="stat-value" id="statsUptime">--</div>
-                        </div>
+                    <div class="stat-value-large" id="pm10Large">--</div>
+                    <div class="stat-subtitle">µg/m³</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">PM1.0</span>
+                        <span class="stat-icon">💨</span>
+                    </div>
+                    <div class="stat-value-large" id="pm1Large">--</div>
+                    <div class="stat-subtitle">µg/m³</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-title">📊 สถิติ PM2.5</div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">ต่ำสุด</div>
+                        <div class="mini-stat-value color-good" id="statsMin">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">สูงสุด</div>
+                        <div class="mini-stat-value color-unhealthy" id="statsMax">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">เฉลี่ย</div>
+                        <div class="mini-stat-value color-moderate" id="statsAvg">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📈 ประสิทธิภาพ</div>
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Samples</div>
+                        <div class="mini-stat-value" id="statsSamples">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Success</div>
+                        <div class="mini-stat-value color-good" id="statsSuccess">--</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Uptime</div>
+                        <div class="mini-stat-value" id="statsUptime">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📡 สถานะระบบ</div>
+                <div style="padding: 20px 0;">
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">WiFi Connection</div>
+                        <div style="font-size: 1.2rem; font-weight: 600;" id="wifiStatus">--</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 5px;">Last Update</div>
+                        <div style="font-size: 0.9rem;" id="lastUpdate">--</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Chart Section -->
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">📈 PM2.5 Trend (Last 20 readings)</span>
-            </div>
-            <div class="chart-container">
-                <canvas id="pmChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Particles & Location Grid -->
-        <div class="grid" style="margin-top: 30px;">
-            <!-- Particles Card -->
+        <!-- Chart -->
+        <div class="grid-2">
             <div class="card">
-                <div class="card-header">
-                    <span class="card-title">🔬 Particle Count</span>
-                </div>
-                <div class="particles-list">
-                    <div class="particle-item">
-                        <span class="particle-label">Particles > 0.3µm</span>
-                        <span class="particle-value" id="particles03">--</span>
-                    </div>
-                    <div class="particle-item">
-                        <span class="particle-label">Particles > 0.5µm</span>
-                        <span class="particle-value" id="particles05">--</span>
-                    </div>
-                    <div class="particle-item">
-                        <span class="particle-label">Particles > 1.0µm</span>
-                        <span class="particle-value" id="particles10">--</span>
-                    </div>
+                <div class="card-title">📈 แนวโน้ม PM2.5 (20 ค่าล่าสุด)</div>
+                <div class="chart-wrapper">
+                    <canvas id="pmChart"></canvas>
                 </div>
             </div>
 
-            <!-- Location Card -->
             <div class="card">
-                <div class="card-header">
-                    <span class="card-title">📍 Location Info</span>
-                </div>
-                <div class="location-info">
-                    <span>🏫</span>
-                    <div>
-                        <div style="font-weight: 600;">โรงเรียนพิษณุโลกปัญญานุกูล</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">16.8225°N, 100.2650°E</div>
+                <div class="card-title">🔬 จำนวนอนุภาค</div>
+                <div class="particle-grid">
+                    <div class="particle-row">
+                        <div class="particle-info">
+                            <span class="particle-emoji">⚫</span>
+                            <div class="particle-text">
+                                <h4>Particles > 0.3µm</h4>
+                            </div>
+                        </div>
+                        <div class="particle-value-display" id="particles03">--</div>
                     </div>
-                </div>
-                <div class="location-info">
-                    <span>🆔</span>
-                    <div>
-                        <div style="font-weight: 600;">Device ID</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);" id="deviceId">--</div>
+
+                    <div class="particle-row">
+                        <div class="particle-info">
+                            <span class="particle-emoji">🔵</span>
+                            <div class="particle-text">
+                                <h4>Particles > 0.5µm</h4>
+                            </div>
+                        </div>
+                        <div class="particle-value-display" id="particles05">--</div>
                     </div>
-                </div>
-                <div class="location-info">
-                    <span>📡</span>
-                    <div>
-                        <div style="font-weight: 600;">WiFi Status</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);" id="wifiStatus">--</div>
+
+                    <div class="particle-row">
+                        <div class="particle-info">
+                            <span class="particle-emoji">🟣</span>
+                            <div class="particle-text">
+                                <h4>Particles > 1.0µm</h4>
+                            </div>
+                        </div>
+                        <div class="particle-value-display" id="particles10">--</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="timestamp" id="lastUpdate">Last updated: --</div>
+        <!-- Footer -->
+        <div class="footer">
+            <p>🏫 โรงเรียนพิษณุโลกปัญญานุกูล | 📍 16.8225°N, 100.2650°E</p>
+            <p style="margin-top: 10px;">PMS9103 Firebase Complete System v3.0 | Powered by ESP32 & Firebase</p>
+        </div>
     </div>
 
-    <!-- Download CSV Button -->
-    <button class="download-btn" onclick="downloadCSV()">📥 ดาวน์โหลดข้อมูล CSV</button>
-
-    <!-- Offline Overlay (hidden by default) -->
-    <div id="offlineOverlay" class="offline-overlay" style="display: none;">
-        <div class="offline-message">
-            <h2>❌ ไม่มีข้อมูลจาก ESP32</h2>
-            <p style="margin-top: 15px; color: var(--text-secondary);">
-                กรุณาตรวจสอบ:<br>
-                • ESP32 เชื่อมต่อ WiFi แล้วหรือไม่<br>
-                • Firebase Database Rules ตั้งค่าถูกต้องหรือไม่<br>
-                • ดู Serial Monitor ว่ามี error หรือไม่
-            </p>
-            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--primary); border: none; border-radius: 8px; color: white; cursor: pointer;">
-                🔄 Reload หน้าเว็บ
-            </button>
-        </div>
-    </div>
+    <!-- Download Button -->
+    <button class="fab" onclick="downloadCSV()" title="ดาวน์โหลดข้อมูล CSV">📥</button>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <script>
-        // ═══════════════════════════════════════════════════════════
-        // 🔥 Firebase Configuration - ใส่ข้อมูลเดียวกับใน ESP32
-        // ═══════════════════════════════════════════════════════════
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyD3zfXIGjpWruTXA7C_cl23hm3xu_EK9Kw",
             authDomain: "pms9103-complete-system.firebaseapp.com",
             databaseURL: "https://pms9103-complete-system-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "pms9103-complete-system",
-            storageBucket: "pms9103-complete-system.firebasestorage.app",
-            messagingSenderId: "0",
-            appId: "1:0:web:0"
+            storageBucket: "pms9103-complete-system.firebasestorage.app"
         };
 
         const DEVICE_ID = "PMS9103_PLPANYA_001";
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // ═══════════════════════════════════════════════════════════
-        // 📊 Chart Setup
-        // ═══════════════════════════════════════════════════════════
+        // Chart Setup
         const ctx = document.getElementById('pmChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'PM2.5 (µg/m³)',
+                    label: 'PM2.5',
                     data: [],
-                    borderColor: '#00d4ff',
-                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                    borderWidth: 2,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
                     tension: 0.4,
                     fill: true,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#00d4ff',
+                    pointRadius: 5,
+                    pointBackgroundColor: '#3b82f6',
                     pointBorderColor: '#fff',
-                    pointBorderWidth: 2
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 7
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        padding: 12,
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#f1f5f9',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#94a3b8'
-                        }
+                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                        ticks: { color: '#94a3b8', font: { size: 12 } }
                     },
                     x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#94a3b8',
-                            maxRotation: 45,
-                            minRotation: 45
-                        }
+                        grid: { color: 'rgba(148, 163, 184, 0.1)' },
+                        ticks: { color: '#94a3b8', font: { size: 11 }, maxRotation: 45 }
                     }
                 }
             }
         });
 
-        // ═══════════════════════════════════════════════════════════
-        // 🔄 Data Management (In-Memory Storage)
-        // ═══════════════════════════════════════════════════════════
         let currentData = {};
-        let historyData = [];
-        const MAX_HISTORY = 20;
+        let lastAlertPM25 = 0;
 
-        // ═══════════════════════════════════════════════════════════
-        // 🎨 UI Update Functions
-        // ═══════════════════════════════════════════════════════════
-        function getAQIStatus(pm25) {
-            if (pm25 <= 12) return { text: 'ดีมาก (Good)', class: 'aqi-good', emoji: '😊' };
-            if (pm25 <= 35) return { text: 'ปานกลาง (Moderate)', class: 'aqi-moderate', emoji: '😐' };
-            if (pm25 <= 55) return { text: 'เริ่มมีผล (USG)', class: 'aqi-moderate', emoji: '😷' };
-            if (pm25 <= 150) return { text: 'มีผลต่อสุขภาพ', class: 'aqi-unhealthy', emoji: '⚠️' };
-            if (pm25 <= 250) return { text: 'อันตราย', class: 'aqi-unhealthy', emoji: '❌' };
-            return { text: 'อันตรายมาก', class: 'aqi-unhealthy', emoji: '☠️' };
+        function getAQIInfo(pm25) {
+            if (pm25 <= 12) return { 
+                text: '😊 ดีมาก - Good', 
+                class: 'aqi-good',
+                color: 'color-good',
+                emoji: '😊'
+            };
+            if (pm25 <= 35) return { 
+                text: '😐 ปานกลาง - Moderate', 
+                class: 'aqi-moderate',
+                color: 'color-moderate',
+                emoji: '😐'
+            };
+            if (pm25 <= 55) return { 
+                text: '😷 เริ่มมีผล - USG', 
+                class: 'aqi-usg',
+                color: 'color-usg',
+                emoji: '😷'
+            };
+            if (pm25 <= 150) return { 
+                text: '⚠️ อันตราย - Unhealthy', 
+                class: 'aqi-unhealthy',
+                color: 'color-unhealthy',
+                emoji: '⚠️'
+            };
+            return { 
+                text: '☠️ อันตรายมาก - Hazardous', 
+                class: 'aqi-unhealthy',
+                color: 'color-unhealthy',
+                emoji: '☠️'
+            };
         }
 
         function updateUI(data) {
-            // Hide loading, show content
-            document.getElementById('pm25Loading').style.display = 'none';
-            document.getElementById('pm25Content').style.display = 'block';
+            document.getElementById('mainLoading').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
 
-            // PM2.5
-            document.getElementById('pm25Value').textContent = data.pm2_5 || '--';
-            document.getElementById('pm25Raw').textContent = data.pm2_5_raw || '--';
-            document.getElementById('pm25Avg').textContent = data.pm2_5_avg || '--';
-            document.getElementById('pm25Median').textContent = data.pm2_5_median || '--';
+            const pm25 = data.pm2_5 || 0;
+            const aqiInfo = getAQIInfo(pm25);
 
-            const aqiStatus = getAQIStatus(data.pm2_5 || 0);
-            const statusEl = document.getElementById('pm25Status');
-            statusEl.textContent = aqiStatus.text;
-            statusEl.className = 'pm-status ' + aqiStatus.class;
+            // Main Display
+            document.getElementById('pm25MainValue').textContent = pm25;
+            document.getElementById('pm25RawMain').textContent = data.pm2_5_raw || '--';
+            document.getElementById('pm25AvgMain').textContent = data.pm2_5_avg || '--';
+            document.getElementById('pm25MedianMain').textContent = data.pm2_5_median || '--';
 
-            // Update icon
-            const cardIcon = document.querySelector('.card:nth-child(1) .card-icon');
-            cardIcon.textContent = aqiStatus.emoji;
+            const megaValue = document.getElementById('pm25Mega');
+            megaValue.className = 'pm-mega-value ' + aqiInfo.color;
 
-            // PM10 & PM1.0
-            document.getElementById('pm10Value').textContent = data.pm10 || '--';
-            document.getElementById('pm10Raw').textContent = data.pm10_raw || '--';
-            document.getElementById('pm1Value').textContent = data.pm1_0 || '--';
-            document.getElementById('aqiLevel').textContent = data.aqi?.level || '--';
+            const badge = document.getElementById('aqiBadge');
+            badge.textContent = aqiInfo.text;
+            badge.className = 'aqi-badge ' + aqiInfo.class;
+
+            // Quick Stats
+            document.getElementById('pm10Large').textContent = data.pm10 || '--';
+            document.getElementById('pm1Large').textContent = data.pm1_0 || '--';
 
             // Particles
-            document.getElementById('particles03').textContent = (data.particles?.um_03 || '--').toLocaleString();
-            document.getElementById('particles05').textContent = (data.particles?.um_05 || '--').toLocaleString();
-            document.getElementById('particles10').textContent = (data.particles?.um_10 || '--').toLocaleString();
+            document.getElementById('particles03').textContent = (data.particles?.um_03 || 0).toLocaleString();
+            document.getElementById('particles05').textContent = (data.particles?.um_05 || 0).toLocaleString();
+            document.getElementById('particles10').textContent = (data.particles?.um_10 || 0).toLocaleString();
 
-            // Device Info
-            document.getElementById('deviceId').textContent = DEVICE_ID;
-            
             // Timestamp
             document.getElementById('lastUpdate').textContent = 
-                `Last updated: ${data.timestamp || new Date().toLocaleString('th-TH')}`;
+                data.timestamp || new Date().toLocaleString('th-TH');
+
+            // Alert Check
+            if (pm25 > 55 && lastAlertPM25 <= 55) {
+                showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`);
+            }
+            lastAlertPM25 = pm25;
         }
 
         function updateStats(stats) {
@@ -767,28 +822,38 @@
             document.getElementById('statsMax').textContent = stats.max_pm25 || '--';
             document.getElementById('statsAvg').textContent = stats.avg_pm25 || '--';
             document.getElementById('statsSamples').textContent = (stats.sample_count || 0).toLocaleString();
-            
-            const successRate = currentData.stats?.success_rate || 0;
-            document.getElementById('statsSuccess').textContent = successRate.toFixed(1) + '%';
 
-            // Uptime
+            const successRate = currentData.stats?.success_rate || 0;
+            document.getElementById('statsSuccess').textContent = successRate.toFixed(0) + '%';
+
             const uptime = stats.uptime_seconds || 0;
             const hours = Math.floor(uptime / 3600);
             const minutes = Math.floor((uptime % 3600) / 60);
-            document.getElementById('statsUptime').textContent = `${hours}h ${minutes}m`;
+            document.getElementById('statsUptime').textContent = `${hours}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        function updateWiFiStatus(status) {
+            if (!status || !status.wifi) return;
+            
+            const wifiEl = document.getElementById('wifiStatus');
+            if (status.wifi.connected) {
+                wifiEl.innerHTML = `✅ ${status.wifi.rssi} dBm`;
+            } else {
+                wifiEl.textContent = '❌ Offline';
+            }
         }
 
         function updateChart(pm25, timestamp) {
             const timeStr = new Date(timestamp).toLocaleTimeString('th-TH', { 
                 hour: '2-digit', 
-                minute: '2-digit' 
+                minute: '2-digit',
+                second: '2-digit'
             });
 
             chart.data.labels.push(timeStr);
             chart.data.datasets[0].data.push(pm25);
 
-            // Keep only last 20 points
-            if (chart.data.labels.length > MAX_HISTORY) {
+            if (chart.data.labels.length > 20) {
                 chart.data.labels.shift();
                 chart.data.datasets[0].data.shift();
             }
@@ -796,160 +861,73 @@
             chart.update('none');
         }
 
-        function updateWiFiStatus(status) {
-            if (!status) return;
-            
-            const wifiEl = document.getElementById('wifiStatus');
-            if (status.wifi?.connected) {
-                wifiEl.innerHTML = `✅ Connected (${status.wifi.rssi} dBm)<br><small>${status.wifi.ip}</small>`;
-            } else {
-                wifiEl.textContent = '❌ Disconnected';
-            }
-        }
-
-        // ═══════════════════════════════════════════════════════════
-        // 🔥 Firebase Real-time Listeners
-        // ═══════════════════════════════════════════════════════════
-        
-        // Listen to Current Data (อัพเดททุก 10 วินาที จาก ESP32)
-        const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
-        currentRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                console.log('📥 Received data from Firebase:', data);
-                currentData = data;
-                updateUI(data);
-                
-                // Update chart with PM2.5
-                if (data.pm2_5 && data.timestamp) {
-                    updateChart(data.pm2_5, data.timestamp);
-                }
-                
-                // Check air quality alert
-                if (data.pm2_5) {
-                    checkAirQualityAlert(data.pm2_5);
-                }
-                
-                // Reset no data timeout
-                resetNoDataTimeout();
-                
-                // Update connection status
-                document.getElementById('connectionStatus').textContent = '✅ เชื่อมต่อสำเร็จ - Real-time';
-            }
-        }, (error) => {
-            console.error('❌ Firebase Error:', error);
-            document.getElementById('connectionStatus').textContent = '❌ เชื่อมต่อล้มเหลว';
-        });
-
-        // Listen to Statistics (อัพเดททุก 5 นาที)
-        const statsRef = database.ref(`sensors/${DEVICE_ID}/statistics`);
-        statsRef.on('value', (snapshot) => {
-            const stats = snapshot.val();
-            if (stats) {
-                console.log('📊 Received stats from Firebase:', stats);
-                updateStats(stats);
-            }
-        });
-
-        // Listen to Status
-        const statusRef = database.ref(`sensors/${DEVICE_ID}/status`);
-        statusRef.on('value', (snapshot) => {
-            const status = snapshot.val();
-            if (status) {
-                console.log('📡 Received status from Firebase:', status);
-                updateWiFiStatus(status);
-            }
-        });
-
-        // ═══════════════════════════════════════════════════════════
-        // 🚀 Initialize
-        // ═══════════════════════════════════════════════════════════
-        console.log('🔥 Firebase initialized');
-        console.log('📍 Listening to:', `sensors/${DEVICE_ID}/`);
-        document.getElementById('connectionStatus').textContent = '⏳ กำลังรอข้อมูล...';
-
-        // ═══════════════════════════════════════════════════════════
-        // ⚠️ Alert System
-        // ═══════════════════════════════════════════════════════════
-        let lastAlertPM25 = 0;
-
-        function checkAirQualityAlert(pm25) {
-            // แจ้งเตือนเมื่อค่าเกิน 55 (Unhealthy for Sensitive Groups)
-            if (pm25 > 55 && lastAlertPM25 <= 55) {
-                showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`, 'warning');
-            }
-            // แจ้งเตือนอันตรายเมื่อเกิน 150
-            if (pm25 > 150 && lastAlertPM25 <= 150) {
-                showAlert(`🚨 อันตราย! PM2.5 = ${pm25} µg/m³ อยู่ในที่ปิดทันที!`, 'danger');
-            }
-            lastAlertPM25 = pm25;
-        }
-
-        function showAlert(message, type) {
+        function showAlert(message) {
             const alertDiv = document.createElement('div');
-            alertDiv.className = `alert-banner alert-${type}`;
+            alertDiv.className = 'alert aqi-unhealthy';
             alertDiv.textContent = message;
             document.body.appendChild(alertDiv);
 
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                alertDiv.style.animation = 'slideOutRight 0.5s ease';
-                setTimeout(() => alertDiv.remove(), 500);
-            }, 5000);
+            setTimeout(() => alertDiv.remove(), 5000);
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // 📥 Download CSV Function
-        // ═══════════════════════════════════════════════════════════
         function downloadCSV() {
-            if (!currentData || !currentData.pm2_5) {
-                alert('ยังไม่มีข้อมูลให้ดาวน์โหลด');
+            if (!currentData.pm2_5) {
+                alert('ยังไม่มีข้อมูล');
                 return;
             }
 
             const csv = [
-                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'AQI Status', 'AQI Level'],
+                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'Status'],
                 [
                     currentData.timestamp || new Date().toISOString(),
                     currentData.pm1_0 || 0,
                     currentData.pm2_5 || 0,
                     currentData.pm10 || 0,
-                    currentData.aqi?.status || 'N/A',
-                    currentData.aqi?.level || 0
+                    currentData.aqi?.status || 'N/A'
                 ]
             ].map(row => row.join(',')).join('\n');
 
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `PM2.5_${DEVICE_ID}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `AirQuality_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
-        // ═══════════════════════════════════════════════════════════
-        // 🔍 No Data Detection
-        // ═══════════════════════════════════════════════════════════
-        let noDataTimeout;
-        
-        function resetNoDataTimeout() {
-            clearTimeout(noDataTimeout);
-            document.getElementById('offlineOverlay').style.display = 'none';
-            
-            // ถ้าไม่มีข้อมูลนาน 30 วินาที แสดงข้อความ
-            noDataTimeout = setTimeout(() => {
-                document.getElementById('offlineOverlay').style.display = 'flex';
-            }, 30000);
-        }
-
-        resetNoDataTimeout();
-    </script>
-    <style>
-        @keyframes slideOutRight {
-            to {
-                transform: translateX(400px);
-                opacity: 0;
+        // Firebase Listeners
+        const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
+        currentRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                console.log('📥 Data received:', data);
+                currentData = data;
+                updateUI(data);
+                
+                if (data.pm2_5 && data.timestamp) {
+                    updateChart(data.pm2_5, data.timestamp);
+                }
+                
+                document.getElementById('connectionStatus').textContent = '✅ เชื่อมต่อสำเร็จ';
             }
-        }
-    </style>
+        }, (error) => {
+            console.error('❌ Error:', error);
+            document.getElementById('connectionStatus').textContent = '❌ เชื่อมต่อล้มเหลว';
+        });
+
+        const statsRef = database.ref(`sensors/${DEVICE_ID}/statistics`);
+        statsRef.on('value', (snapshot) => {
+            const stats = snapshot.val();
+            if (stats) updateStats(stats);
+        });
+
+        const statusRef = database.ref(`sensors/${DEVICE_ID}/status`);
+        statusRef.on('value', (snapshot) => {
+            const status = snapshot.val();
+            if (status) updateWiFiStatus(status);
+        });
+
+        console.log('🔥 Dashboard initialized');
+        console.log('📍 Listening to:', DEVICE_ID);
+    </script>
 </body>
 </html>
