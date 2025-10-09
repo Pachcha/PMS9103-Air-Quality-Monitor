@@ -21,11 +21,11 @@
             --bg-card: #334155;
             
             /* กรมอนามัย Color Standards */
-            --doh-blue: #3b82f6;      /* ดีมาก 0-15 */
-            --doh-green: #10b981;     /* ดี 15.1-25 */
-            --doh-yellow: #fbbf24;    /* ปานกลาง 25.1-37.5 */
-            --doh-orange: #f97316;    /* เริ่มมีผล 37.6-75 */
-            --doh-red: #ef4444;       /* มีผล 75+ */
+            --doh-blue: #3b82f6;
+            --doh-green: #10b981;
+            --doh-yellow: #fbbf24;
+            --doh-orange: #f97316;
+            --doh-red: #ef4444;
             
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
@@ -346,6 +346,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            justify-content: space-between;
         }
 
         .advice-text {
@@ -356,6 +357,64 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
             border-left: 3px solid var(--doh-blue);
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--doh-blue);
+            transform: translateY(-2px);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--doh-green);
+        }
+
+        .copy-all-btn {
+            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .copy-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .copy-all-btn:active {
+            transform: translateY(0);
+        }
+
+        .copy-all-btn.copied {
+            background: linear-gradient(135deg, var(--doh-green), var(--doh-green));
         }
 
         .mini-stats {
@@ -573,8 +632,13 @@
             
             <div class="advice-section">
                 <div class="advice-label">
-                    <span>👥</span>
-                    <span>ประชาชนทั่วไป</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>👥</span>
+                        <span>ประชาชนทั่วไป</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyAdvice('general')" title="คัดลอกคำแนะนำ">
+                        <span id="copyIconGeneral">📋</span>
+                    </button>
                 </div>
                 <div class="advice-text" id="adviceGeneral">
                     กำลังโหลดคำแนะนำ...
@@ -583,12 +647,24 @@
 
             <div class="advice-section">
                 <div class="advice-label">
-                    <span>⚠️</span>
-                    <span>กลุ่มเสี่ยง</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>⚠️</span>
+                        <span>กลุ่มเสี่ยง</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyAdvice('risk')" title="คัดลอกคำแนะนำ">
+                        <span id="copyIconRisk">📋</span>
+                    </button>
                 </div>
                 <div class="advice-text" id="adviceRisk" style="border-left-color: var(--doh-orange);">
                     กำลังโหลดคำแนะนำ...
                 </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="copy-all-btn" onclick="copyAllAdvice()" title="คัดลอกคำแนะนำทั้งหมด">
+                    <span id="copyIconAll">📄</span>
+                    <span>คัดลอกทั้งหมด</span>
+                </button>
             </div>
         </div>
 
@@ -839,7 +915,6 @@
             const pm10 = data.pm10 || 0;
             const aqiInfo = getAQIInfo(pm25);
 
-            // Main Display
             const mainDisplay = document.getElementById('mainDisplay');
             mainDisplay.className = 'main-display level-' + aqiInfo.level;
 
@@ -868,7 +943,6 @@
             colorBadge.textContent = '🎨 ' + aqiInfo.colorName;
             colorBadge.className = 'color-' + aqiInfo.color;
 
-            // Advice Card
             const adviceCard = document.getElementById('adviceCard');
             adviceCard.className = 'advice-card level-' + aqiInfo.level;
 
@@ -956,6 +1030,120 @@
             link.href = URL.createObjectURL(blob);
             link.download = `AirQuality_DOH_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
+        }
+
+        function copyAdvice(type) {
+            let text = '';
+            let iconId = '';
+            let btnId = '';
+
+            if (type === 'general') {
+                text = document.getElementById('adviceGeneral').textContent;
+                iconId = 'copyIconGeneral';
+                btnId = event.target.closest('.copy-btn');
+            } else if (type === 'risk') {
+                text = document.getElementById('adviceRisk').textContent;
+                iconId = 'copyIconRisk';
+                btnId = event.target.closest('.copy-btn');
+            }
+
+            const pm25 = currentData.pm2_5 || 0;
+            const aqiInfo = getAQIInfo(pm25);
+            const timestamp = new Date().toLocaleString('th-TH');
+
+            const fullText = `🏥 คำแนะนำจากกรมอนามัย
+📊 ระดับคุณภาพอากาศ: ${aqiInfo.text} ${aqiInfo.emoji}
+📈 PM2.5: ${pm25} µg/m³
+🎨 สี: ${aqiInfo.colorName}
+
+${type === 'general' ? '👥 คำแนะนำสำหรับประชาชนทั่วไป:' : '⚠️ คำแนะนำสำหรับกลุ่มเสี่ยง:'}
+${text}
+
+🕐 ${timestamp}
+📍 โรงเรียนพิษณุโลกปัญญานุกูล`;
+
+            copyToClipboard(fullText, iconId, btnId);
+        }
+
+        function copyAllAdvice() {
+            const adviceGeneral = document.getElementById('adviceGeneral').textContent;
+            const adviceRisk = document.getElementById('adviceRisk').textContent;
+            const pm25 = currentData.pm2_5 || 0;
+            const pm10 = currentData.pm10 || 0;
+            const aqiInfo = getAQIInfo(pm25);
+            const timestamp = new Date().toLocaleString('th-TH');
+
+            const fullText = `🏥 รายงานคุณภาพอากาศ - กรมอนามัย
+
+📊 สถานะ: ${aqiInfo.text} ${aqiInfo.emoji}
+🎨 ระดับสี: ${aqiInfo.colorName}
+
+📈 ค่าวัดได้:
+• PM2.5: ${pm25} µg/m³
+• PM10: ${pm10} µg/m³
+
+💡 คำแนะนำจากกรมอนามัย:
+
+👥 ประชาชนทั่วไป:
+${adviceGeneral}
+
+⚠️ กลุ่มเสี่ยง:
+${adviceRisk}
+
+🕐 ${timestamp}
+📍 โรงเรียนพิษณุโลกปัญญานุกูล
+🆔 PMS9103 v4.0 - DOH Standard`;
+
+            copyToClipboard(fullText, 'copyIconAll', event.target.closest('.copy-all-btn'));
+        }
+
+        function copyToClipboard(text, iconId, btnElement) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopySuccess(iconId, btnElement);
+                }).catch(err => {
+                    console.error('Copy failed:', err);
+                    fallbackCopy(text, iconId, btnElement);
+                });
+            } else {
+                fallbackCopy(text, iconId, btnElement);
+            }
+        }
+
+        function fallbackCopy(text, iconId, btnElement) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopySuccess(iconId, btnElement);
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('ไม่สามารถคัดลอกได้ กรุณาลองอีกครั้ง');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showCopySuccess(iconId, btnElement) {
+            const icon = document.getElementById(iconId);
+            const originalIcon = icon.textContent;
+            
+            icon.textContent = '✅';
+            if (btnElement) {
+                btnElement.classList.add('copied');
+            }
+            
+            setTimeout(() => {
+                icon.textContent = originalIcon;
+                if (btnElement) {
+                    btnElement.classList.remove('copied');
+                }
+            }, 2000);
         }
 
         // Firebase Listeners
