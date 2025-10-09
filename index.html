@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจวัดคุณภาพอากาศ v3.1 HYBRID - โรงเรียนพิษณุโลกปัญญานุกูล</title>
+    <title>ระบบตรวจวัดคุณภาพอากาศ v4.0 - โรงเรียนพิษณุโลกปัญญานุกูล</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -56,7 +56,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
             padding: 8px 20px;
             border-radius: 50px;
             font-size: 0.85rem;
@@ -110,64 +110,6 @@
             border-radius: 50%;
             background: var(--accent-green);
             animation: pulse 2s infinite;
-        }
-
-        .data-source-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 20px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.1));
-            border: 2px solid var(--accent-purple);
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50px;
-            border: 1px solid var(--border);
-        }
-
-        .toggle-label {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background: var(--bg-card);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid var(--border);
-        }
-
-        .toggle-switch.active {
-            background: var(--accent-blue);
-            border-color: var(--accent-blue);
-        }
-
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 22px;
-            height: 22px;
-            background: white;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(30px);
         }
 
         .dashboard {
@@ -355,57 +297,6 @@
             font-weight: 700;
         }
 
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .comparison-table th,
-        .comparison-table td {
-            padding: 15px;
-            text-align: center;
-            border: 1px solid var(--border);
-        }
-
-        .comparison-table th {
-            background: rgba(255, 255, 255, 0.05);
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .comparison-table td {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .comparison-table tr:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .check-icon {
-            font-size: 1.5rem;
-        }
-
-        .debug-panel {
-            background: rgba(139, 92, 246, 0.1);
-            border: 2px solid var(--accent-purple);
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-
-        .debug-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--accent-purple);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .chart-wrapper {
             position: relative;
             height: 350px;
@@ -466,7 +357,6 @@
         .color-moderate { color: var(--accent-yellow); }
         .color-usg { color: var(--accent-orange); }
         .color-unhealthy { color: var(--accent-red); }
-        .color-purple { color: var(--accent-purple); }
 
         .loading {
             display: flex;
@@ -600,7 +490,7 @@
 <body>
     <div class="container">
         <div class="hero">
-            <div class="version-badge">v3.1 HYBRID</div>
+            <div class="version-badge">v4.0 SIMPLIFIED</div>
             <h1>🌫️ ระบบตรวจวัดคุณภาพอากาศ</h1>
             <p>โรงเรียนพิษณุโลกปัญญานุกูล - Real-time Air Quality Monitoring</p>
             
@@ -615,17 +505,8 @@
                 <div class="status-item">
                     🆔 <span id="deviceIdShort">PMS9103_001</span>
                 </div>
-                <div class="status-item data-source-badge">
-                    📊 <span id="dataSource">Loading...</span>
-                </div>
-            </div>
-
-            <div class="status-bar" style="margin-top: 15px;">
-                <div class="toggle-container">
-                    <span class="toggle-label">🐛 Debug Mode</span>
-                    <div class="toggle-switch" id="debugToggle" onclick="toggleDebug()">
-                        <div class="toggle-slider"></div>
-                    </div>
+                <div class="status-item">
+                    📊 Atmospheric Mode
                 </div>
             </div>
         </div>
@@ -655,8 +536,8 @@
                             <div class="mini-stat-value" id="pm25MedianMain">--</div>
                         </div>
                         <div class="mini-stat">
-                            <div class="mini-stat-label">Source</div>
-                            <div class="mini-stat-value color-purple" id="sourceShort" style="font-size: 1.2rem;">--</div>
+                            <div class="mini-stat-label">PM10</div>
+                            <div class="mini-stat-value color-moderate" id="pm10Short">--</div>
                         </div>
                     </div>
                 </div>
@@ -674,69 +555,11 @@
 
                 <div class="stat-card">
                     <div class="stat-header">
-                        <span class="stat-title">PM1.0</span>
-                        <span class="stat-icon">💨</span>
+                        <span class="stat-title">อนุภาค 0.3µm</span>
+                        <span class="stat-icon">⚫</span>
                     </div>
-                    <div class="stat-value-large" id="pm1Large">--</div>
-                    <div class="stat-subtitle">µg/m³</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="debugPanel" style="display: none;">
-            <div class="card debug-panel">
-                <div class="debug-title">
-                    🐛 Debug Information - Data Source Comparison
-                </div>
-                
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>CF=1 (Standard)</th>
-                            <th>Atmospheric</th>
-                            <th>Current Use</th>
-                            <th>Sanity Check</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>PM1.0</td>
-                            <td id="pm1cf1">--</td>
-                            <td id="pm1atm">--</td>
-                            <td id="pm1use">--</td>
-                            <td id="pm1check" class="check-icon">--</td>
-                        </tr>
-                        <tr>
-                            <td>PM2.5</td>
-                            <td id="pm25cf1">--</td>
-                            <td id="pm25atm">--</td>
-                            <td id="pm25use">--</td>
-                            <td id="pm25check" class="check-icon">--</td>
-                        </tr>
-                        <tr>
-                            <td>PM10</td>
-                            <td id="pm10cf1">--</td>
-                            <td id="pm10atm">--</td>
-                            <td id="pm10use">--</td>
-                            <td id="pm10check" class="check-icon">--</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="mini-stats" style="margin-top: 30px;">
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Sanity Failures</div>
-                        <div class="mini-stat-value color-unhealthy" id="sanityFailures">--</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Error Frames</div>
-                        <div class="mini-stat-value color-moderate" id="errorFrames">--</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-label">Valid Frames</div>
-                        <div class="mini-stat-value color-good" id="validFrames">--</div>
-                    </div>
+                    <div class="stat-value-large" id="particles03Short">--</div>
+                    <div class="stat-subtitle">/ 0.1L</div>
                 </div>
             </div>
         </div>
@@ -797,13 +620,12 @@
             </div>
 
             <div class="card">
-                <div class="card-title">⚙️ Data Source</div>
+                <div class="card-title">🎯 AQI Level</div>
                 <div style="text-align: center; padding: 20px 0;">
-                    <div class="data-source-badge" style="font-size: 1.5rem; padding: 20px 30px;">
-                        <span id="dataSourceMain">--</span>
-                    </div>
-                    <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
-                        <span id="dataSourceDesc">Loading...</span>
+                    <div style="font-size: 4rem; margin-bottom: 15px;" id="aqiEmoji">😊</div>
+                    <div style="font-size: 1.2rem; font-weight: 600;" id="aqiLevelText">ดีมาก</div>
+                    <div style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary);" id="aqiDescription">
+                        คุณภาพอากาศดีเยี่ยม
                     </div>
                 </div>
             </div>
@@ -855,7 +677,7 @@
 
         <div class="footer">
             <p>🏫 โรงเรียนพิษณุโลกปัญญานุกูล | 📍 16.8225°N, 100.2650°E</p>
-            <p style="margin-top: 10px;">PMS9103 Firebase System v3.1 HYBRID | CF=1 for PM1/PM2.5 + ATM for PM10</p>
+            <p style="margin-top: 10px;">PMS9103 Firebase System v4.0 SIMPLIFIED | PM2.5 & PM10 (Atmospheric Mode)</p>
         </div>
     </div>
 
@@ -878,7 +700,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        let debugMode = false;
         let currentData = {};
         let lastAlertPM25 = 0;
 
@@ -930,51 +751,46 @@
             }
         });
 
-        function toggleDebug() {
-            debugMode = !debugMode;
-            const toggle = document.getElementById('debugToggle');
-            const panel = document.getElementById('debugPanel');
-            
-            if (debugMode) {
-                toggle.classList.add('active');
-                panel.style.display = 'block';
-                panel.style.animation = 'slideUp 0.5s ease';
-            } else {
-                toggle.classList.remove('active');
-                panel.style.display = 'none';
-            }
-        }
-
         function getAQIInfo(pm25) {
             if (pm25 <= 12) return { 
                 text: '😊 ดีมาก - Good', 
                 class: 'aqi-good',
                 color: 'color-good',
-                emoji: '😊'
+                emoji: '😊',
+                level: 'ดีมาก',
+                desc: 'คุณภาพอากาศดีเยี่ยม'
             };
             if (pm25 <= 35) return { 
                 text: '😐 ปานกลาง - Moderate', 
                 class: 'aqi-moderate',
                 color: 'color-moderate',
-                emoji: '😐'
+                emoji: '😐',
+                level: 'ปานกลาง',
+                desc: 'คุณภาพอากาศพอใช้'
             };
             if (pm25 <= 55) return { 
                 text: '😷 เริ่มมีผล - USG', 
                 class: 'aqi-usg',
                 color: 'color-usg',
-                emoji: '😷'
+                emoji: '😷',
+                level: 'เริ่มมีผล',
+                desc: 'กลุ่มเสี่ยงควรระวัง'
             };
             if (pm25 <= 150) return { 
                 text: '⚠️ อันตราย - Unhealthy', 
                 class: 'aqi-unhealthy',
                 color: 'color-unhealthy',
-                emoji: '⚠️'
+                emoji: '⚠️',
+                level: 'อันตราย',
+                desc: 'มีผลต่อสุขภาพ'
             };
             return { 
                 text: '☠️ อันตรายมาก - Hazardous', 
                 class: 'aqi-unhealthy',
                 color: 'color-unhealthy',
-                emoji: '☠️'
+                emoji: '☠️',
+                level: 'อันตรายมาก',
+                desc: 'หลีกเลี่ยงกิจกรรมกลางแจ้ง'
             };
         }
 
@@ -983,11 +799,13 @@
             document.getElementById('mainContent').style.display = 'block';
 
             const pm25 = data.pm2_5 || 0;
+            const pm10 = data.pm10 || 0;
             const aqiInfo = getAQIInfo(pm25);
 
             document.getElementById('pm25MainValue').textContent = pm25;
             document.getElementById('pm25AvgMain').textContent = data.pm2_5_avg || '--';
             document.getElementById('pm25MedianMain').textContent = data.pm2_5_median || '--';
+            document.getElementById('pm10Short').textContent = pm10;
 
             const megaValue = document.getElementById('pm25Mega');
             megaValue.className = 'pm-mega-value ' + aqiInfo.color;
@@ -996,40 +814,16 @@
             badge.textContent = aqiInfo.text;
             badge.className = 'aqi-badge ' + aqiInfo.class;
 
-            const dataSource = data.data_source || 'Unknown';
-            document.getElementById('dataSource').textContent = dataSource;
-            
-            let sourceShort = dataSource;
-            if (dataSource.includes('Hybrid')) {
-                sourceShort = 'Hybrid';
-            } else if (dataSource === 'CF=1') {
-                sourceShort = 'CF1';
-            } else if (dataSource === 'Atmospheric') {
-                sourceShort = 'ATM';
-            }
-            document.getElementById('sourceShort').textContent = sourceShort;
-            document.getElementById('dataSourceMain').textContent = dataSource;
-            
-            let sourceDesc = '';
-            if (dataSource.includes('Hybrid')) {
-                sourceDesc = '⭐ Hybrid: CF=1 for PM1/PM2.5, Atmospheric for PM10';
-            } else if (dataSource === 'CF=1') {
-                sourceDesc = 'Standard Particles (Lab Environment)';
-            } else {
-                sourceDesc = 'Atmospheric Environment (General Use)';
-            }
-            document.getElementById('dataSourceDesc').textContent = sourceDesc;
-
-            document.getElementById('pm10Large').textContent = data.pm10 || '--';
-            document.getElementById('pm1Large').textContent = data.pm1_0 || '--';
-
-            if (debugMode) {
-                updateDebugPanel(data);
-            }
+            document.getElementById('pm10Large').textContent = pm10;
+            document.getElementById('particles03Short').textContent = (data.particles?.um_03 || 0).toLocaleString();
 
             document.getElementById('particles03').textContent = (data.particles?.um_03 || 0).toLocaleString();
             document.getElementById('particles05').textContent = (data.particles?.um_05 || 0).toLocaleString();
             document.getElementById('particles10').textContent = (data.particles?.um_10 || 0).toLocaleString();
+
+            document.getElementById('aqiEmoji').textContent = aqiInfo.emoji;
+            document.getElementById('aqiLevelText').textContent = aqiInfo.level;
+            document.getElementById('aqiDescription').textContent = aqiInfo.desc;
 
             document.getElementById('lastUpdate').textContent = 
                 data.last_update || data.timestamp || new Date().toLocaleString('th-TH');
@@ -1038,30 +832,6 @@
                 showAlert(`⚠️ คุณภาพอากาศแย่! PM2.5 = ${pm25} µg/m³`);
             }
             lastAlertPM25 = pm25;
-        }
-
-        function updateDebugPanel(data) {
-            document.getElementById('pm1cf1').textContent = data.cf1?.pm1_0 || '--';
-            document.getElementById('pm25cf1').textContent = data.cf1?.pm2_5 || '--';
-            document.getElementById('pm10cf1').textContent = data.cf1?.pm10 || '--';
-
-            document.getElementById('pm1atm').textContent = data.atm?.pm1_0 || '--';
-            document.getElementById('pm25atm').textContent = data.atm?.pm2_5 || '--';
-            document.getElementById('pm10atm').textContent = data.atm?.pm10 || '--';
-
-            const useColor = 'style="color: var(--accent-purple); font-weight: 700;"';
-            document.getElementById('pm1use').innerHTML = `<span ${useColor}>${data.pm1_0 || '--'}</span>`;
-            document.getElementById('pm25use').innerHTML = `<span ${useColor}>${data.pm2_5 || '--'}</span>`;
-            document.getElementById('pm10use').innerHTML = `<span ${useColor}>${data.pm10 || '--'}</span>`;
-
-            const checkmark = '✅';
-            document.getElementById('pm1check').textContent = checkmark;
-            document.getElementById('pm25check').textContent = checkmark;
-            document.getElementById('pm10check').textContent = checkmark;
-
-            document.getElementById('sanityFailures').textContent = data.stats?.sanity_failures || 0;
-            document.getElementById('errorFrames').textContent = data.stats?.error_frames || 0;
-            document.getElementById('validFrames').textContent = data.stats?.valid_frames || 0;
         }
 
         function updateStats(stats) {
@@ -1091,7 +861,7 @@
                 wifiEl.textContent = '❌ Offline';
             }
 
-            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v3.1-HYBRID';
+            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v4.0-SIMPLIFIED';
         }
 
         function updateChart(pm25, timestamp) {
@@ -1128,27 +898,23 @@
             }
 
             const csv = [
-                ['Timestamp', 'PM1.0', 'PM2.5', 'PM10', 'Data Source', 'CF1_PM1', 'CF1_PM25', 'CF1_PM10', 'ATM_PM1', 'ATM_PM25', 'ATM_PM10', 'Status'],
+                ['Timestamp', 'PM2.5', 'PM10', 'Particles_0.3um', 'Particles_0.5um', 'Particles_1.0um', 'AQI_Status', 'AQI_Level'],
                 [
                     currentData.timestamp || new Date().toISOString(),
-                    currentData.pm1_0 || 0,
                     currentData.pm2_5 || 0,
                     currentData.pm10 || 0,
-                    currentData.data_source || 'N/A',
-                    currentData.cf1?.pm1_0 || 0,
-                    currentData.cf1?.pm2_5 || 0,
-                    currentData.cf1?.pm10 || 0,
-                    currentData.atm?.pm1_0 || 0,
-                    currentData.atm?.pm2_5 || 0,
-                    currentData.atm?.pm10 || 0,
-                    currentData.aqi?.status || 'N/A'
+                    currentData.particles?.um_03 || 0,
+                    currentData.particles?.um_05 || 0,
+                    currentData.particles?.um_10 || 0,
+                    currentData.aqi?.status || 'N/A',
+                    currentData.aqi?.level || 0
                 ]
             ].map(row => row.join(',')).join('\n');
 
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `AirQuality_v31_Hybrid_${new Date().toISOString().split('T')[0]}.csv`;
+            link.download = `AirQuality_v4_${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
         }
 
@@ -1183,10 +949,9 @@
             if (status) updateWiFiStatus(status);
         });
 
-        console.log('🔥 Dashboard v3.1 HYBRID initialized');
+        console.log('🔥 Dashboard v4.0 SIMPLIFIED initialized');
         console.log('📍 Listening to:', DEVICE_ID);
-        console.log('🐛 Debug Mode: Press toggle to enable');
-        console.log('⭐ Hybrid Mode: CF=1 for PM1/PM2.5, ATM for PM10');
+        console.log('✅ PM2.5 & PM10 (Atmospheric Mode Only)');
     </script>
 </body>
 </html>
