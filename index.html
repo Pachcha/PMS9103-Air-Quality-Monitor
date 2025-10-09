@@ -20,7 +20,6 @@
             --bg-secondary: #1e293b;
             --bg-card: #334155;
             
-            /* กรมอนามัย Color Standards */
             --doh-blue: #3b82f6;
             --doh-green: #10b981;
             --doh-yellow: #fbbf24;
@@ -450,6 +449,39 @@
             margin-top: 15px;
         }
 
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .time-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: 'Kanit', sans-serif;
+        }
+
+        .time-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--doh-blue);
+            color: var(--text-primary);
+        }
+
+        .time-btn.active {
+            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
         .color-blue { color: var(--doh-blue); }
         .color-green { color: var(--doh-green); }
         .color-yellow { color: var(--doh-yellow); }
@@ -531,7 +563,6 @@
             line-height: 1.6;
         }
 
-        /* Responsive Design */
         @media (max-width: 400px) {
             .hero h1 { font-size: 1.5rem; padding-right: 80px; }
             .pm-mega-value { font-size: 4rem; }
@@ -626,7 +657,6 @@
             </div>
         </div>
 
-        <!-- คำแนะนำตามระดับคุณภาพอากาศ -->
         <div class="advice-card" id="adviceCard">
             <div class="card-title">💡 คำแนะนำจากกรมอนามัย</div>
             
@@ -738,6 +768,12 @@
         <div class="grid-2">
             <div class="card">
                 <div class="card-title">📈 แนวโน้ม PM2.5</div>
+                <div class="chart-controls">
+                    <button class="time-btn active" onclick="changeTimeRange('hour')" id="btnHour">รายชั่วโมง</button>
+                    <button class="time-btn" onclick="changeTimeRange('day')" id="btnDay">รายวัน</button>
+                    <button class="time-btn" onclick="changeTimeRange('week')" id="btnWeek">รายสัปดาห์</button>
+                    <button class="time-btn" onclick="changeTimeRange('month')" id="btnMonth">รายเดือน</button>
+                </div>
                 <div class="chart-wrapper">
                     <canvas id="pmChart"></canvas>
                 </div>
@@ -817,6 +853,8 @@
         const database = firebase.database();
 
         let currentData = {};
+        let currentTimeRange = 'hour';
+        let historicalData = [];
 
         const ctx = document.getElementById('pmChart').getContext('2d');
         const chart = new Chart(ctx, {
@@ -824,7 +862,7 @@
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'PM2.5',
+                    label: 'PM2.5 (รายชั่วโมง)',
                     data: [],
                     borderColor: '#3b82f6',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -842,12 +880,22 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
+                    legend: { 
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#94a3b8',
+                            font: { size: 11, family: 'Kanit' },
+                            padding: 10
+                        }
+                    },
                     tooltip: {
                         backgroundColor: 'rgba(15, 23, 42, 0.9)',
                         padding: 10,
                         borderColor: '#3b82f6',
-                        borderWidth: 1
+                        borderWidth: 1,
+                        titleFont: { family: 'Kanit' },
+                        bodyFont: { family: 'Kanit' }
                     }
                 },
                 scales: {
@@ -858,7 +906,7 @@
                     },
                     x: {
                         grid: { color: 'rgba(148, 163, 184, 0.1)' },
-                        ticks: { color: '#94a3b8', font: { size: 9 }, maxRotation: 45, maxTicksLimit: 8 }
+                        ticks: { color: '#94a3b8', font: { size: 9 }, maxRotation: 45, maxTicksLimit: 12 }
                     }
                 }
             }
@@ -990,20 +1038,152 @@
 
         function updateChart(pm25, timestamp) {
             const date = new Date(timestamp);
-            const timeStr = date.toLocaleTimeString('th-TH', { 
-                hour: '2-digit', 
-                minute: '2-digit'
+
+            historicalData.push({
+                timestamp: date,
+                pm25: pm25
             });
 
-            chart.data.labels.push(timeStr);
-            chart.data.datasets[0].data.push(pm25);
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            historicalData = historicalData.filter(d => d.timestamp > thirtyDaysAgo);
 
-            if (chart.data.labels.length > 20) {
-                chart.data.labels.shift();
-                chart.data.datasets[0].data.shift();
+            updateChartByRange(currentTimeRange);
+        }
+
+        function changeTimeRange(range) {
+            currentTimeRange = range;
+
+            document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('active'));
+            const btnId = 'btn' + range.charAt(0).toUpperCase() + range.slice(1);
+            document.getElementById(btnId).classList.add('active');
+
+            let maxTicksLimit = 8;
+            
+            switch(range) {
+                case 'hour':
+                    maxTicksLimit = 12;
+                    break;
+                case 'day':
+                    maxTicksLimit = 7;
+                    break;
+                case 'week':
+                    maxTicksLimit = 4;
+                    break;
+                case 'month':
+                    maxTicksLimit = 6;
+                    break;
             }
 
+            chart.options.scales.x.ticks.maxTicksLimit = maxTicksLimit;
+            updateChartByRange(range);
+        }
+
+        function updateChartByRange(range) {
+            let groupedData = [];
+            let labels = [];
+
+            if (historicalData.length === 0) {
+                chart.data.labels = ['กำลังโหลดข้อมูล...'];
+                chart.data.datasets[0].data = [0];
+                chart.update('none');
+                return;
+            }
+
+            switch(range) {
+                case 'hour':
+                    const hourlyData = historicalData.slice(-24);
+                    labels = hourlyData.map(d => d.timestamp.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }));
+                    groupedData = hourlyData.map(d => d.pm25);
+                    break;
+
+                case 'day':
+                    const dailyGroups = {};
+                    historicalData.forEach(d => {
+                        const dateKey = d.timestamp.toLocaleDateString('th-TH');
+                        if (!dailyGroups[dateKey]) {
+                            dailyGroups[dateKey] = [];
+                        }
+                        dailyGroups[dateKey].push(d.pm25);
+                    });
+
+                    const dailyEntries = Object.entries(dailyGroups).slice(-7);
+                    if (dailyEntries.length === 0) {
+                        labels = ['ไม่มีข้อมูลรายวัน'];
+                        groupedData = [0];
+                    } else {
+                        labels = dailyEntries.map(([date]) => date.substring(0, 10));
+                        groupedData = dailyEntries.map(([, values]) => 
+                            Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+                        );
+                    }
+                    break;
+
+                case 'week':
+                    const weeklyGroups = {};
+                    historicalData.forEach(d => {
+                        const weekNum = getWeekNumber(d.timestamp);
+                        const year = d.timestamp.getFullYear();
+                        const weekKey = `W${weekNum}/${year.toString().substring(2)}`;
+                        if (!weeklyGroups[weekKey]) {
+                            weeklyGroups[weekKey] = [];
+                        }
+                        weeklyGroups[weekKey].push(d.pm25);
+                    });
+
+                    const weeklyEntries = Object.entries(weeklyGroups).slice(-4);
+                    if (weeklyEntries.length === 0) {
+                        labels = ['ไม่มีข้อมูลรายสัปดาห์'];
+                        groupedData = [0];
+                    } else {
+                        labels = weeklyEntries.map(([week]) => week);
+                        groupedData = weeklyEntries.map(([, values]) => 
+                            Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+                        );
+                    }
+                    break;
+
+                case 'month':
+                    const monthlyGroups = {};
+                    historicalData.forEach(d => {
+                        const monthKey = d.timestamp.toLocaleDateString('th-TH', { year: 'numeric', month: 'short' });
+                        if (!monthlyGroups[monthKey]) {
+                            monthlyGroups[monthKey] = [];
+                        }
+                        monthlyGroups[monthKey].push(d.pm25);
+                    });
+
+                    const monthlyEntries = Object.entries(monthlyGroups);
+                    if (monthlyEntries.length === 0) {
+                        labels = ['ไม่มีข้อมูลรายเดือน'];
+                        groupedData = [0];
+                    } else {
+                        labels = monthlyEntries.map(([month]) => month);
+                        groupedData = monthlyEntries.map(([, values]) => 
+                            Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+                        );
+                    }
+                    break;
+            }
+
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = groupedData;
+            
+            const rangeLabels = {
+                'hour': 'PM2.5 (รายชั่วโมง)',
+                'day': 'PM2.5 (เฉลี่ยรายวัน)',
+                'week': 'PM2.5 (เฉลี่ยรายสัปดาห์)',
+                'month': 'PM2.5 (เฉลี่ยรายเดือน)'
+            };
+            chart.data.datasets[0].label = rangeLabels[range];
+            
             chart.update('none');
+        }
+
+        function getWeekNumber(date) {
+            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+            return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
         }
 
         function downloadCSV() {
@@ -1146,7 +1326,6 @@ ${adviceRisk}
             }, 2000);
         }
 
-        // Firebase Listeners
         const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
         currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1164,6 +1343,27 @@ ${adviceRisk}
             document.getElementById('connectionStatus').textContent = '❌ ล้มเหลว';
         });
 
+        const historyRef = database.ref(`sensors/${DEVICE_ID}/history`);
+        historyRef.limitToLast(1000).once('value', (snapshot) => {
+            const historyData = snapshot.val();
+            if (historyData) {
+                console.log('📊 Loading historical data...');
+                Object.entries(historyData).forEach(([key, value]) => {
+                    if (value.pm2_5 && value.timestamp) {
+                        historicalData.push({
+                            timestamp: new Date(value.timestamp),
+                            pm25: value.pm2_5
+                        });
+                    }
+                });
+                
+                historicalData.sort((a, b) => a.timestamp - b.timestamp);
+                
+                updateChartByRange(currentTimeRange);
+                console.log(`✅ Loaded ${historicalData.length} historical records`);
+            }
+        });
+
         const statsRef = database.ref(`sensors/${DEVICE_ID}/statistics`);
         statsRef.on('value', (snapshot) => {
             const stats = snapshot.val();
@@ -1178,6 +1378,7 @@ ${adviceRisk}
 
         console.log('🏥 DOH Standard Dashboard v4.0 initialized');
         console.log('📋 Department of Health AQI Standards');
+        console.log('📊 Chart supports: Hour / Day / Week / Month views');
     </script>
 </body>
 </html>
