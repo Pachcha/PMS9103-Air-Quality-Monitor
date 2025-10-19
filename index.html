@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="คุณภาพอากาศ">
+    <meta name="description" content="ระบบตรวจวัดคุณภาพอากาศ PM2.5 มาตรฐานกรมอนามัย - โรงเรียนพิษณุโลกปัญญานุกูล">
+    <link rel="manifest" id="manifest-placeholder">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230f172a' width='100' height='100'/><text y='70' font-size='70' text-anchor='middle' x='50'>🏥</text></svg>">
     <title>ระบบตรวจวัดคุณภาพอากาศ - กรมอนามัย</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -506,6 +512,119 @@
             animation: spin 1s linear infinite;
         }
 
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        .install-prompt {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+            z-index: 998;
+            display: none;
+            animation: slideInRight 0.5s ease;
+            max-width: 280px;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        .install-prompt-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .install-prompt-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .install-btn {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .install-btn.primary {
+            background: white;
+            color: var(--doh-blue);
+        }
+
+        .install-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .install-btn:active {
+            transform: scale(0.95);
+        }
+
+        .offline-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 1000;
+            display: none;
+            animation: slideDown 0.5s ease;
+        }
+
+        .offline-indicator.show {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 15px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            line-height: 1.6;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -531,36 +650,26 @@
             50% { opacity: 0.7; transform: scale(1.05); }
         }
 
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-            transition: all 0.3s ease;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .fab:active {
-            transform: scale(0.9);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px 15px;
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            line-height: 1.6;
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
         }
 
         @media (max-width: 400px) {
@@ -587,9 +696,25 @@
     </style>
 </head>
 <body>
+    <div class="offline-indicator" id="offlineIndicator">
+        📵 ไม่มีการเชื่อมต่ออินเทอร์เน็ต
+    </div>
+
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-prompt-content">
+            <div class="install-prompt-text">
+                📱 ติดตั้งแอปเพื่อใช้งานแบบออฟไลน์
+            </div>
+            <div class="install-buttons">
+                <button class="install-btn primary" onclick="installPWA()">ติดตั้ง</button>
+                <button class="install-btn secondary" onclick="dismissInstall()">ปิด</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="hero">
-            <div class="version-badge">v4.0 DOH</div>
+            <div class="version-badge">v4.0 PWA</div>
             <h1>🏥 คุณภาพอากาศ</h1>
             <p>โรงเรียนพิษณุโลกปัญญานุกูล</p>
             <div class="doh-badge">📋 มาตรฐานกรมอนามัย กระทรวงสาธารณสุข</div>
@@ -830,6 +955,7 @@
             <p style="margin-top: 5px;">📍 16.8225°N, 100.2650°E</p>
             <p style="margin-top: 5px;">PMS9103 v4.0 | มาตรฐานกรมอนามัย</p>
             <p style="margin-top: 5px;">🏥 Department of Health Standard</p>
+            <p style="margin-top: 5px;">📱 PWA Ready - ติดตั้งเป็นแอปได้</p>
         </div>
     </div>
 
@@ -839,6 +965,170 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <script>
+        // ==================== PWA Setup ====================
+        let deferredPrompt;
+        let swRegistration;
+
+        // Create and inject manifest
+        const manifestData = {
+            "name": "ระบบตรวจวัดคุณภาพอากาศ - กรมอนามัย",
+            "short_name": "คุณภาพอากาศ",
+            "description": "ระบบตรวจวัดคุณภาพอากาศ PM2.5 มาตรฐานกรมอนามัย",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#0f172a",
+            "theme_color": "#0f172a",
+            "orientation": "portrait",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230f172a' width='192' height='192'/><text y='140' font-size='120' text-anchor='middle' x='96'>🏥</text></svg>",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                },
+                {
+                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%230f172a' width='512' height='512'/><text y='380' font-size='320' text-anchor='middle' x='256'>🏥</text></svg>",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+
+        // Service Worker
+        const swCode = `
+const CACHE_NAME = 'air-quality-v1';
+const urlsToCache = [
+    './',
+    'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js',
+    'https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap',
+    'https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js'
+];
+
+self.addEventListener('install', event => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(urlsToCache))
+            .catch(err => console.log('Cache failed:', err))
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) {
+                    return response;
+                }
+                return fetch(event.request).then(response => {
+                    if (!response || response.status !== 200 || response.type === 'error') {
+                        return response;
+                    }
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseToCache);
+                    });
+                    return response;
+                });
+            })
+            .catch(() => {
+                return caches.match('./');
+            })
+    );
+});
+
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    return self.clients.claim();
+});
+`;
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            const swURL = URL.createObjectURL(swBlob);
+            
+            navigator.serviceWorker.register(swURL)
+                .then(registration => {
+                    swRegistration = registration;
+                    console.log('✅ Service Worker registered');
+                })
+                .catch(err => {
+                    console.log('❌ Service Worker registration failed:', err);
+                });
+        }
+
+        // Install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install prompt after 3 seconds
+            setTimeout(() => {
+                const installPrompt = document.getElementById('installPrompt');
+                if (installPrompt) {
+                    installPrompt.classList.add('show');
+                }
+            }, 3000);
+        });
+
+        function installPWA() {
+            const installPrompt = document.getElementById('installPrompt');
+            if (installPrompt) {
+                installPrompt.classList.remove('show');
+            }
+            
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ PWA installed');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function dismissInstall() {
+            const installPrompt = document.getElementById('installPrompt');
+            if (installPrompt) {
+                installPrompt.classList.remove('show');
+            }
+        }
+
+        // Online/Offline detection
+        function updateOnlineStatus() {
+            const offlineIndicator = document.getElementById('offlineIndicator');
+            if (offlineIndicator) {
+                if (navigator.onLine) {
+                    offlineIndicator.classList.remove('show');
+                } else {
+                    offlineIndicator.classList.add('show');
+                }
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        window.addEventListener('load', updateOnlineStatus);
+
+        // ==================== Firebase & App Code ====================
         const firebaseConfig = {
             apiKey: "AIzaSyD3zfXIGjpWruTXA7C_cl23hm3xu_EK9Kw",
             authDomain: "pms9103-complete-system.firebaseapp.com",
@@ -856,6 +1146,7 @@
         let currentTimeRange = 'hour';
         let historicalData = [];
 
+        // ==================== Chart Setup ====================
         const ctx = document.getElementById('pmChart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
@@ -912,6 +1203,7 @@
             }
         });
 
+        // ==================== AQI Functions ====================
         function getAQIInfo(pm25) {
             if (pm25 <= 15) return {
                 level: 1,
@@ -955,6 +1247,7 @@
             };
         }
 
+        // ==================== UI Update Functions ====================
         function updateUI(data) {
             document.getElementById('mainLoading').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
@@ -1036,6 +1329,7 @@
             document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v4.0-DOH';
         }
 
+        // ==================== Chart Functions ====================
         function updateChart(pm25, timestamp) {
             const date = new Date(timestamp);
 
@@ -1186,6 +1480,7 @@
             return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
         }
 
+        // ==================== Export Functions ====================
         function downloadCSV() {
             if (!currentData.pm2_5) {
                 alert('ยังไม่มีข้อมูล');
@@ -1212,6 +1507,7 @@
             link.click();
         }
 
+        // ==================== Copy Functions ====================
         function copyAdvice(type) {
             let text = '';
             let iconId = '';
@@ -1326,6 +1622,7 @@ ${adviceRisk}
             }, 2000);
         }
 
+        // ==================== Firebase Listeners ====================
         const currentRef = database.ref(`sensors/${DEVICE_ID}/current`);
         currentRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1376,9 +1673,11 @@ ${adviceRisk}
             if (status) updateWiFiStatus(status);
         });
 
+        // ==================== Initialization ====================
         console.log('🏥 DOH Standard Dashboard v4.0 initialized');
         console.log('📋 Department of Health AQI Standards');
         console.log('📊 Chart supports: Hour / Day / Week / Month views');
+        console.log('📱 PWA enabled - ติดตั้งแอปได้แล้ว!');
     </script>
 </body>
 </html>
