@@ -512,6 +512,122 @@
             animation: spin 1s linear infinite;
         }
 
+        /* ==================== Notification Styles ==================== */
+        .notification-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            animation: slideUp 0.6s ease;
+            margin-bottom: 15px;
+        }
+
+        .notification-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .notification-toggle.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid var(--doh-blue);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, var(--doh-blue), var(--doh-green));
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .notification-settings {
+            display: grid;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .setting-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .setting-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .notification-status {
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--doh-green);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        .notification-status.denied {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--doh-red);
+        }
+
+        .notification-status.pending {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: var(--doh-yellow);
+        }
+
+        /* ==================== Other Styles ==================== */
         .fab {
             position: fixed;
             bottom: 20px;
@@ -714,7 +830,7 @@
 
     <div class="container">
         <div class="hero">
-            <div class="version-badge">v4.0 PWA</div>
+            <div class="version-badge">v4.1 PWA+🔔</div>
             <h1>🏥 คุณภาพอากาศ</h1>
             <p>โรงเรียนพิษณุโลกปัญญานุกูล</p>
             <div class="doh-badge">📋 มาตรฐานกรมอนามัย กระทรวงสาธารณสุข</div>
@@ -726,6 +842,10 @@
                 </div>
                 <div class="status-item">📍 พิษณุโลก</div>
                 <div class="status-item">🆔 <span id="deviceIdShort">PMS9103</span></div>
+                <div class="status-item" id="notificationBadge">
+                    <span>🔔</span>
+                    <span id="notificationStatusText">การแจ้งเตือน</span>
+                </div>
             </div>
         </div>
 
@@ -779,6 +899,41 @@
                     <div class="stat-value-large" id="particles03Short" style="font-size: 1.8rem;">--</div>
                     <div class="stat-subtitle">> 0.3µm / 0.1L</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ==================== Notification Settings Card ==================== -->
+        <div class="notification-card">
+            <div class="card-title">🔔 ตั้งค่าการแจ้งเตือน</div>
+            
+            <div class="notification-toggle" id="notificationToggle" onclick="toggleNotifications()">
+                <div class="toggle-label">
+                    <span>🔔</span>
+                    <span>เปิดการแจ้งเตือน</span>
+                </div>
+                <div class="toggle-switch" id="notificationSwitch">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="notification-settings" id="notificationSettings" style="display: none;">
+                <div class="setting-item">
+                    <div class="setting-label">🔴 แจ้งเตือนเมื่อ PM2.5 ≥</div>
+                    <div class="setting-value" id="thresholdValue">37.5 µg/m³</div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">⏰ ตรวจสอบทุก</div>
+                    <div class="setting-value">5 นาที</div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-label">📊 ระดับการแจ้งเตือน</div>
+                    <div class="setting-value">ปานกลางขึ้นไป</div>
+                </div>
+            </div>
+
+            <div class="notification-status" id="notificationStatus">
+                <span id="notificationStatusIcon">⏳</span>
+                <span id="notificationStatusMessage">กรุณาเปิดการแจ้งเตือน</span>
             </div>
         </div>
 
@@ -953,9 +1108,9 @@
         <div class="footer">
             <p>🏫 โรงเรียนพิษณุโลกปัญญานุกูล</p>
             <p style="margin-top: 5px;">📍 16.8225°N, 100.2650°E</p>
-            <p style="margin-top: 5px;">PMS9103 v4.0 | มาตรฐานกรมอนามัย</p>
+            <p style="margin-top: 5px;">PMS9103 v4.1 | มาตรฐานกรมอนามัย</p>
             <p style="margin-top: 5px;">🏥 Department of Health Standard</p>
-            <p style="margin-top: 5px;">📱 PWA Ready - ติดตั้งเป็นแอปได้</p>
+            <p style="margin-top: 5px;">📱 PWA + 🔔 Push Notifications</p>
         </div>
     </div>
 
@@ -973,7 +1128,7 @@
         const manifestData = {
             "name": "ระบบตรวจวัดคุณภาพอากาศ - กรมอนามัย",
             "short_name": "คุณภาพอากาศ",
-            "description": "ระบบตรวจวัดคุณภาพอากาศ PM2.5 มาตรฐานกรมอนามัย",
+            "description": "ระบบตรวจวัดคุณภาพอากาศ PM2.5 มาตรฐานกรมอนามัย พร้อมการแจ้งเตือน",
             "start_url": "./",
             "display": "standalone",
             "background_color": "#0f172a",
@@ -999,9 +1154,9 @@
         const manifestURL = URL.createObjectURL(manifestBlob);
         document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
 
-        // Service Worker
+        // Enhanced Service Worker with Push Notifications
         const swCode = `
-const CACHE_NAME = 'air-quality-v1';
+const CACHE_NAME = 'air-quality-v4.1';
 const urlsToCache = [
     './',
     'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js',
@@ -1057,6 +1212,62 @@ self.addEventListener('activate', event => {
     );
     return self.clients.claim();
 });
+
+// ==================== Push Notification Handlers ====================
+self.addEventListener('push', event => {
+    console.log('📬 Push notification received');
+    
+    let data = {
+        title: '🏥 คุณภาพอากาศ',
+        body: 'มีการอัพเดทข้อมูลคุณภาพอากาศ',
+        icon: '🔔',
+        badge: '🏥',
+        tag: 'air-quality',
+        requireInteraction: false
+    };
+
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+
+    const options = {
+        body: data.body,
+        icon: data.icon || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%230f172a" width="100" height="100"/><text y="70" font-size="70" text-anchor="middle" x="50">🏥</text></svg>',
+        badge: data.badge || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect fill="%230f172a" width="96" height="96"/><text y="70" font-size="60" text-anchor="middle" x="48">🔔</text></svg>',
+        vibrate: data.vibrate || [200, 100, 200],
+        tag: data.tag,
+        requireInteraction: data.requireInteraction,
+        data: data.data || {},
+        actions: data.actions || [
+            {action: 'open', title: '📊 ดูรายละเอียด'},
+            {action: 'close', title: '❌ ปิด'}
+        ]
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', event => {
+    console.log('🖱️ Notification clicked:', event.action);
+    
+    event.notification.close();
+
+    if (event.action === 'open' || !event.action) {
+        event.waitUntil(
+            clients.openWindow('/')
+        );
+    }
+});
+
+self.addEventListener('notificationclose', event => {
+    console.log('❌ Notification closed');
+});
 `;
 
         // Register Service Worker
@@ -1068,6 +1279,9 @@ self.addEventListener('activate', event => {
                 .then(registration => {
                     swRegistration = registration;
                     console.log('✅ Service Worker registered');
+                    
+                    // Check notification permission on load
+                    checkNotificationPermission();
                 })
                 .catch(err => {
                     console.log('❌ Service Worker registration failed:', err);
@@ -1079,7 +1293,6 @@ self.addEventListener('activate', event => {
             e.preventDefault();
             deferredPrompt = e;
             
-            // Show install prompt after 3 seconds
             setTimeout(() => {
                 const installPrompt = document.getElementById('installPrompt');
                 if (installPrompt) {
@@ -1127,6 +1340,218 @@ self.addEventListener('activate', event => {
         window.addEventListener('online', updateOnlineStatus);
         window.addEventListener('offline', updateOnlineStatus);
         window.addEventListener('load', updateOnlineStatus);
+
+        // ==================== Push Notifications ====================
+        let notificationsEnabled = false;
+        let lastNotificationLevel = 0;
+        let lastNotificationTime = 0;
+        const NOTIFICATION_COOLDOWN = 5 * 60 * 1000; // 5 minutes
+
+        // Check notification permission
+        function checkNotificationPermission() {
+            if (!('Notification' in window)) {
+                updateNotificationUI('unsupported');
+                return;
+            }
+
+            const permission = Notification.permission;
+            
+            if (permission === 'granted') {
+                notificationsEnabled = true;
+                updateNotificationUI('granted');
+            } else if (permission === 'denied') {
+                updateNotificationUI('denied');
+            } else {
+                updateNotificationUI('default');
+            }
+        }
+
+        // Toggle notifications
+        async function toggleNotifications() {
+            if (!('Notification' in window)) {
+                alert('🚫 เบราว์เซอร์นี้ไม่รองรับการแจ้งเตือน');
+                return;
+            }
+
+            if (Notification.permission === 'denied') {
+                alert('🚫 การแจ้งเตือนถูกปิดใช้งาน\nกรุณาเปิดการแจ้งเตือนในการตั้งค่าเบราว์เซอร์');
+                return;
+            }
+
+            if (!notificationsEnabled) {
+                // Request permission
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    notificationsEnabled = true;
+                    updateNotificationUI('granted');
+                    
+                    // Save preference
+                    localStorage.setItem('notificationsEnabled', 'true');
+                    
+                    // Send test notification
+                    sendTestNotification();
+                } else {
+                    updateNotificationUI('denied');
+                }
+            } else {
+                // Disable notifications
+                notificationsEnabled = false;
+                updateNotificationUI('default');
+                localStorage.setItem('notificationsEnabled', 'false');
+            }
+        }
+
+        // Update notification UI
+        function updateNotificationUI(status) {
+            const toggle = document.getElementById('notificationToggle');
+            const switchEl = document.getElementById('notificationSwitch');
+            const settings = document.getElementById('notificationSettings');
+            const statusEl = document.getElementById('notificationStatus');
+            const statusIcon = document.getElementById('notificationStatusIcon');
+            const statusMessage = document.getElementById('notificationStatusMessage');
+            const badge = document.getElementById('notificationBadge');
+            const statusText = document.getElementById('notificationStatusText');
+
+            switch(status) {
+                case 'granted':
+                    toggle.classList.add('active');
+                    switchEl.classList.add('active');
+                    settings.style.display = 'grid';
+                    statusEl.className = 'notification-status';
+                    statusIcon.textContent = '✅';
+                    statusMessage.textContent = 'การแจ้งเตือนเปิดใช้งานแล้ว';
+                    badge.style.display = 'flex';
+                    statusText.textContent = 'เปิด';
+                    break;
+                    
+                case 'denied':
+                    toggle.classList.remove('active');
+                    switchEl.classList.remove('active');
+                    settings.style.display = 'none';
+                    statusEl.className = 'notification-status denied';
+                    statusIcon.textContent = '🚫';
+                    statusMessage.textContent = 'การแจ้งเตือนถูกปิดใช้งาน - เปิดในการตั้งค่าเบราว์เซอร์';
+                    badge.style.display = 'flex';
+                    statusText.textContent = 'ปิด';
+                    break;
+                    
+                case 'unsupported':
+                    statusEl.className = 'notification-status denied';
+                    statusIcon.textContent = '❌';
+                    statusMessage.textContent = 'เบราว์เซอร์ไม่รองรับการแจ้งเตือน';
+                    badge.style.display = 'none';
+                    break;
+                    
+                default:
+                    toggle.classList.remove('active');
+                    switchEl.classList.remove('active');
+                    settings.style.display = 'none';
+                    statusEl.className = 'notification-status pending';
+                    statusIcon.textContent = '⏳';
+                    statusMessage.textContent = 'กรุณาเปิดการแจ้งเตือน';
+                    badge.style.display = 'flex';
+                    statusText.textContent = 'ปิด';
+            }
+        }
+
+        // Send test notification
+        function sendTestNotification() {
+            if (!notificationsEnabled || !swRegistration) return;
+
+            const notification = {
+                title: '🏥 ทดสอบการแจ้งเตือน',
+                body: 'การแจ้งเตือนทำงานปกติ ✅',
+                icon: '✅',
+                tag: 'test',
+                requireInteraction: false,
+                data: { type: 'test' }
+            };
+
+            showNotification(notification);
+        }
+
+        // Show notification
+        function showNotification(data) {
+            if (!swRegistration) {
+                console.log('❌ Service Worker not registered');
+                return;
+            }
+
+            swRegistration.showNotification(data.title, {
+                body: data.body,
+                icon: data.icon || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%230f172a" width="100" height="100"/><text y="70" font-size="70" text-anchor="middle" x="50">🏥</text></svg>',
+                badge: data.badge || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect fill="%230f172a" width="96" height="96"/><text y="70" font-size="60" text-anchor="middle" x="48">🔔</text></svg>',
+                vibrate: data.vibrate || [200, 100, 200],
+                tag: data.tag || 'air-quality',
+                requireInteraction: data.requireInteraction || false,
+                data: data.data || {},
+                actions: data.actions || [
+                    {action: 'open', title: '📊 ดูรายละเอียด'},
+                    {action: 'close', title: '❌ ปิด'}
+                ]
+            }).catch(err => {
+                console.error('❌ Notification error:', err);
+            });
+        }
+
+        // Check if should notify
+        function checkAndNotify(pm25, aqiInfo) {
+            if (!notificationsEnabled) return;
+
+            const now = Date.now();
+            const timeSinceLastNotification = now - lastNotificationTime;
+
+            // Don't spam notifications
+            if (timeSinceLastNotification < NOTIFICATION_COOLDOWN) {
+                return;
+            }
+
+            // Notify if level changed and is moderate or worse (level >= 3)
+            if (aqiInfo.level >= 3 && aqiInfo.level !== lastNotificationLevel) {
+                const notification = {
+                    title: `${aqiInfo.emoji} คุณภาพอากาศ: ${aqiInfo.text}`,
+                    body: `PM2.5: ${pm25} µg/m³\n${aqiInfo.level >= 4 ? '⚠️ ระวัง! ควรหลีกเลี่ยงกิจกรรมกลางแจ้ง' : '💡 ติดตามสถานการณ์อย่างต่อเนื่อง'}`,
+                    icon: aqiInfo.emoji,
+                    tag: 'aqi-level-' + aqiInfo.level,
+                    requireInteraction: aqiInfo.level >= 4,
+                    vibrate: aqiInfo.level >= 4 ? [200, 100, 200, 100, 200] : [200, 100, 200],
+                    data: {
+                        type: 'aqi-alert',
+                        level: aqiInfo.level,
+                        pm25: pm25,
+                        timestamp: now
+                    }
+                };
+
+                showNotification(notification);
+                
+                lastNotificationLevel = aqiInfo.level;
+                lastNotificationTime = now;
+            }
+            // Also notify if PM2.5 exceeds 75 (level 5)
+            else if (pm25 >= 75 && lastNotificationLevel < 5) {
+                const notification = {
+                    title: '🔴 ⚠️ คุณภาพอากาศแย่มาก!',
+                    body: `PM2.5: ${pm25} µg/m³\n🚨 หลีกเลี่ยงกิจกรรมกลางแจ้งทั้งหมด\n😷 สวมหน้ากากทุกครั้งที่ออกจากอาคาร`,
+                    icon: '🔴',
+                    tag: 'critical-alert',
+                    requireInteraction: true,
+                    vibrate: [200, 100, 200, 100, 200, 100, 400],
+                    data: {
+                        type: 'critical-alert',
+                        level: 5,
+                        pm25: pm25,
+                        timestamp: now
+                    }
+                };
+
+                showNotification(notification);
+                
+                lastNotificationLevel = 5;
+                lastNotificationTime = now;
+            }
+        }
 
         // ==================== Firebase & App Code ====================
         const firebaseConfig = {
@@ -1294,6 +1719,9 @@ self.addEventListener('activate', event => {
             document.getElementById('lastUpdate').textContent = timestamp.substring(0, 30);
 
             document.getElementById('connectionStatus').textContent = '✅ เชื่อมต่อแล้ว';
+
+            // Check and send notification if needed
+            checkAndNotify(pm25, aqiInfo);
         }
 
         function updateStats(stats) {
@@ -1326,7 +1754,7 @@ self.addEventListener('activate', event => {
                 wifiEl.textContent = '❌ Offline';
             }
 
-            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v4.0-DOH';
+            document.getElementById('firmwareVersion').textContent = status.firmware_version || 'v4.1-DOH';
         }
 
         // ==================== Chart Functions ====================
@@ -1511,16 +1939,13 @@ self.addEventListener('activate', event => {
         function copyAdvice(type) {
             let text = '';
             let iconId = '';
-            let btnId = '';
 
             if (type === 'general') {
                 text = document.getElementById('adviceGeneral').textContent;
                 iconId = 'copyIconGeneral';
-                btnId = event.target.closest('.copy-btn');
             } else if (type === 'risk') {
                 text = document.getElementById('adviceRisk').textContent;
                 iconId = 'copyIconRisk';
-                btnId = event.target.closest('.copy-btn');
             }
 
             const pm25 = currentData.pm2_5 || 0;
@@ -1538,7 +1963,7 @@ ${text}
 🕐 ${timestamp}
 📍 โรงเรียนพิษณุโลกปัญญานุกูล`;
 
-            copyToClipboard(fullText, iconId, btnId);
+            copyToClipboard(fullText, iconId, event.target.closest('.copy-btn'));
         }
 
         function copyAllAdvice() {
@@ -1555,8 +1980,8 @@ ${text}
 🎨 ระดับสี: ${aqiInfo.colorName}
 
 📈 ค่าวัดได้:
-• PM2.5: ${pm25} µg/m³
-• PM10: ${pm10} µg/m³
+- PM2.5: ${pm25} µg/m³
+- PM10: ${pm10} µg/m³
 
 💡 คำแนะนำจากกรมอนามัย:
 
@@ -1568,7 +1993,7 @@ ${adviceRisk}
 
 🕐 ${timestamp}
 📍 โรงเรียนพิษณุโลกปัญญานุกูล
-🆔 PMS9103 v4.0 - DOH Standard`;
+🆔 PMS9103 v4.1 - DOH Standard`;
 
             copyToClipboard(fullText, 'copyIconAll', event.target.closest('.copy-all-btn'));
         }
@@ -1674,10 +2099,18 @@ ${adviceRisk}
         });
 
         // ==================== Initialization ====================
-        console.log('🏥 DOH Standard Dashboard v4.0 initialized');
+        // Load notification preference
+        const savedPref = localStorage.getItem('notificationsEnabled');
+        if (savedPref === 'true' && Notification.permission === 'granted') {
+            notificationsEnabled = true;
+            updateNotificationUI('granted');
+        }
+
+        console.log('🏥 DOH Standard Dashboard v4.1 initialized');
         console.log('📋 Department of Health AQI Standards');
         console.log('📊 Chart supports: Hour / Day / Week / Month views');
         console.log('📱 PWA enabled - ติดตั้งแอปได้แล้ว!');
+        console.log('🔔 Push Notifications ready!');
     </script>
 </body>
 </html>
